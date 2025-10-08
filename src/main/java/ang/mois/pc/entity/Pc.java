@@ -17,6 +17,13 @@ public class Pc {
         this.roomId = roomId;
     }
 
+    public Pc() {
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }

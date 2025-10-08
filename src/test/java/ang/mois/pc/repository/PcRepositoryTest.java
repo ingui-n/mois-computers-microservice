@@ -54,10 +54,20 @@ public class PcRepositoryTest {
         assertThat(type1PCs).hasSize(2);
     }
 
+    @Test
+    void testFindByRoomIdIn() {
+        setup();
+        List<Pc> pcsAcrossRooms = pcRepository.findByRoomIdIsIn(List.of("roomB", "roomC"));
+        assertThat(pcsAcrossRooms).hasSize(2);
+        assertTrue(pcsAcrossRooms.stream().anyMatch(pc -> pc.getRoomId().equals("roomB")));
+        assertTrue(pcsAcrossRooms.stream().anyMatch(pc -> pc.getRoomId().equals("roomC")));
+    }
+
     void setup() {
         pcRepository.save(new Pc( "ok", "type1", "roomA"));
         pcRepository.save(new Pc("broken", "type1", "roomB"));
         pcRepository.save(new Pc("ok", "type2", "roomA"));
+        pcRepository.save(new Pc("ok", "type2", "roomC"));
     }
 
     @AfterEach

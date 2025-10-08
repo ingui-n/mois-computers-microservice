@@ -9,5 +9,6 @@ import java.util.List;
 public interface PcRepository extends MongoRepository<Pc, String> {
     List<Pc> findByStatus(String status);
     List<Pc> findByRoomId(String roomId);
+    List<Pc> findByRoomIdIsIn(List<String> roomId);
     List<Pc> findByTypeId(String typeId);
 }
