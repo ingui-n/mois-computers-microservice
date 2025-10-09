@@ -17,6 +17,10 @@ public class PcTypeService {
     public List<PcType> getAllTypes() {
         return pcTypeRepository.findAll();
     }
+    public PcType getType(String typeId) {
+        return pcTypeRepository.findById(typeId)
+                .orElseThrow(() -> new IllegalArgumentException("PcType with id " + typeId + " does not exist"));
+    }
 
     public PcType saveType(PcType type) {
         // check for duplicities

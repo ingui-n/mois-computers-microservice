@@ -18,6 +18,11 @@ public class RoomService {
         return roomRepository.findAll();
     }
 
+    public Room get(String id) {
+        return roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Room with id " + id + " does not exist"));
+    }
+
     public List<Room> getRoomsByFaculty(String faculty) {
         return roomRepository.findByFaculty(faculty);
     }
