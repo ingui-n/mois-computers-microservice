@@ -3,9 +3,10 @@
 
 - [ ] Pagination and Filtering
 - [ ] DTOs without sensitive data
+- [ ] Controller Tests
 - [ ] Add Swagger or sth like that
 - [ ] Authentication
-- [ ] Autorisation for admin endpoints (maybe separate admin endpoints additionally)
+- [ ] Authorisation for admin endpoints (maybe separate admin endpoints)
 
 ## Initial Structure Ideas
 * Počítače
