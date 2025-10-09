@@ -1,5 +1,6 @@
 package ang.mois.pc.repository;
 
+import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +19,9 @@ public class RoomRepositoryTest {
 
     @BeforeEach
     void setup() {
-        roomRepository.save(new Room("Lab 101", "Faculty of Informatics"));
-        roomRepository.save(new Room( "Lab 102", "Faculty of Informatics"));
-        roomRepository.save(new Room( "Lab 201", "Faculty of Engineering"));
+        roomRepository.save(new Room("Lab 101", Faculty.FIM));
+        roomRepository.save(new Room( "Lab 102", Faculty.FIM));
+        roomRepository.save(new Room( "Lab 201", Faculty.PrF));
     }
     @AfterEach
     void cleanup() {
@@ -35,7 +36,7 @@ public class RoomRepositoryTest {
 
     @Test
     void testFindByFaculty() {
-        List<Room> informaticsRooms = roomRepository.findByFaculty("Faculty of Informatics");
+        List<Room> informaticsRooms = roomRepository.findByFaculty(Faculty.FIM.name());
         assertThat(informaticsRooms).hasSize(2);
         assertThat(informaticsRooms).extracting(Room::getName).containsExactlyInAnyOrder("Lab 101", "Lab 102");
     }

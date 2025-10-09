@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 import ang.mois.pc.dto.PcFullDocument;
+import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
@@ -42,7 +43,7 @@ class PcServiceTest {
         room = new Room();
         room.setId("r1");
         room.setName("Room A");
-        room.setFaculty("Engineering");
+        room.setFaculty(Faculty.PrF);
 
         pcType = new PcType();
         pcType.setId("t1");
@@ -82,12 +83,12 @@ class PcServiceTest {
     // -------------------------------------------------------------
     @Test
     void getAllPcsByFacultyWithDetails_ShouldReturnMappedResults() {
-        when(roomRepository.findByFaculty(room.getFaculty())).thenReturn(List.of(room));
+        when(roomRepository.findByFaculty(room.getFaculty().name())).thenReturn(List.of(room));
         when(pcRepository.findByRoomIdIsIn(List.of(room.getId()))).thenReturn(List.of(pc));
         when(roomRepository.findById(room.getId())).thenReturn(Optional.of(room));
         when(pcTypeRepository.findById(room.getId())).thenReturn(Optional.of(pcType));
 
-        List<PcFullDocument> result = pcService.getAllPcsByFacultyWithDetails(room.getFaculty());
+        List<PcFullDocument> result = pcService.getAllPcsByFacultyWithDetails(room.getFaculty().name());
 
         assertEquals(1, result.size());
         assertEquals(room.getName(), result.getFirst().room().getName());

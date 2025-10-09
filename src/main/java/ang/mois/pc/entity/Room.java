@@ -8,9 +8,9 @@ public class Room {
     @Id
     private String id;
     private String name;
-    private String faculty;
+    private Faculty faculty;
 
-    public Room(String name, String faculty) {
+    public Room(String name, Faculty faculty) {
         this.name = name;
         this.faculty = faculty;
     }
@@ -34,11 +34,11 @@ public class Room {
         this.name = name;
     }
 
-    public String getFaculty() {
+    public Faculty getFaculty() {
         return faculty;
     }
 
-    public void setFaculty(String faculty) {
+    public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
     }
 }
