@@ -1,14 +1,16 @@
 package ang.mois.pc.repository;
 
 import ang.mois.pc.entity.Pc;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import ang.mois.pc.entity.PcType;
+import ang.mois.pc.entity.Room;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 @Repository
-public interface PcRepository extends MongoRepository<Pc, String> {
+public interface PcRepository extends JpaRepository<Pc, Long> {
     List<Pc> findByStatus(String status);
-    List<Pc> findByRoomId(String roomId);
-    List<Pc> findByRoomIdIsIn(List<String> roomId);
-    List<Pc> findByTypeId(String typeId);
+    List<Pc> findByRoom(Room room);
+    List<Pc> findAllByRoomIn(List<Room> room);
+    List<Pc> findByType(PcType type);
 }

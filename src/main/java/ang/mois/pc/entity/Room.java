@@ -1,14 +1,19 @@
 package ang.mois.pc.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
-@Document(collection = "rooms")
+import java.util.List;
+
+@Entity
+@Table(name = "rooms")
 public class Room {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private Faculty faculty;
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pc> pcs;
 
     public Room(String name, Faculty faculty) {
         this.name = name;
@@ -18,11 +23,11 @@ public class Room {
     public Room() {
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -40,5 +45,13 @@ public class Room {
 
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
+    }
+
+    public List<Pc> getPcs() {
+        return pcs;
+    }
+
+    public void setPcs(List<Pc> pcs) {
+        this.pcs = pcs;
     }
 }

@@ -64,7 +64,7 @@ class PcServiceTest {
     // getAllPcsWithDetails()
     // -------------------------------------------------------------
     @Test
-    void getAllPcsWithDetails_ShouldReturnMappedFullDocuments() {
+    void getAllWithDetails_ShouldReturnMappedFullDocuments() {
         when(pcRepository.findAll()).thenReturn(List.of(pc));
         when(roomRepository.findById(room.getId())).thenReturn(Optional.of(room));
         when(pcTypeRepository.findById(pcType.getId())).thenReturn(Optional.of(pcType));
@@ -82,7 +82,7 @@ class PcServiceTest {
     // getAllPcsByFacultyWithDetails()
     // -------------------------------------------------------------
     @Test
-    void getAllPcsByFacultyWithDetails_ShouldReturnMappedResults() {
+    void getAllByFacultyWithDetails_ShouldReturnMappedResults() {
         when(roomRepository.findByFaculty(room.getFaculty().name())).thenReturn(List.of(room));
         when(pcRepository.findByRoomIdIsIn(List.of(room.getId()))).thenReturn(List.of(pc));
         when(roomRepository.findById(room.getId())).thenReturn(Optional.of(room));
@@ -99,7 +99,7 @@ class PcServiceTest {
     // getAllPcsByTypeWithDetails()
     // -------------------------------------------------------------
     @Test
-    void getAllPcsByTypeWithDetails_ShouldReturnMappedResults() {
+    void getAllByTypeWithDetails_ShouldReturnMappedResults() {
         when(pcRepository.findByTypeId(pcType.getId())).thenReturn(List.of(pc));
         when(roomRepository.findById(room.getId())).thenReturn(Optional.of(room));
 
@@ -114,20 +114,20 @@ class PcServiceTest {
     // savePc()
     // -------------------------------------------------------------
     @Test
-    void savePc_ShouldThrowException_WhenRoomDoesNotExist() {
+    void save_ShouldThrowException_WhenRoomDoesNotExist() {
         when(roomRepository.existsById(room.getId())).thenReturn(false);
         when(pcTypeRepository.existsById(pcType.getId())).thenReturn(true);
 
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> pcService.savePc(pc));
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> pcService.save(pc));
         assertEquals("Room with id r1 does not exist", ex.getMessage());
     }
 
     @Test
-    void savePc_ShouldThrowException_WhenTypeDoesNotExist() {
+    void save_ShouldThrowException_WhenTypeDoesNotExist() {
         when(roomRepository.existsById(room.getId())).thenReturn(true);
         when(pcTypeRepository.existsById(pcType.getId())).thenReturn(false);
 
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> pcService.savePc(pc));
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> pcService.save(pc));
         assertEquals("PcType with id t1 does not exist", ex.getMessage());
     }
 
@@ -137,7 +137,7 @@ class PcServiceTest {
         when(pcTypeRepository.existsById(pcType.getId())).thenReturn(true);
         when(pcRepository.save(pc)).thenReturn(pc);
 
-        Pc saved = pcService.savePc(pc);
+        Pc saved = pcService.save(pc);
 
         assertNotNull(saved);
         verify(pcRepository).save(pc);
@@ -148,7 +148,7 @@ class PcServiceTest {
     // -------------------------------------------------------------
     @Test
     void deletePc_ShouldCallRepositoryDelete() {
-        pcService.deletePc(room.getId());
+        pcService.delete(room.getId());
         verify(pcRepository).deleteById(room.getId());
     }
 
@@ -156,23 +156,23 @@ class PcServiceTest {
     // Basic getters (no logic)
     // -------------------------------------------------------------
     @Test
-    void getAllPcs_ShouldReturnListFromRepository() {
+    void getAll_ShouldReturnListFromRepository() {
         when(pcRepository.findAll()).thenReturn(List.of(pc));
-        List<Pc> result = pcService.getAllPcs();
+        List<Pc> result = pcService.getAll();
         assertEquals(1, result.size());
     }
 
     @Test
-    void getPcsByRoom_ShouldCallRepository() {
+    void getByRoom_ShouldCallRepository() {
         when(pcRepository.findByRoomId(room.getId())).thenReturn(List.of(pc));
-        List<Pc> result = pcService.getPcsByRoom(room.getId());
+        List<Pc> result = pcService.getByRoom(room.getId());
         assertEquals(1, result.size());
     }
 
     @Test
-    void getPcsByType_ShouldCallRepository() {
+    void getByType_ShouldCallRepository() {
         when(pcRepository.findByTypeId(pcType.getId())).thenReturn(List.of(pc));
-        List<Pc> result = pcService.getPcsByType(pcType.getId());
+        List<Pc> result = pcService.getByType(pcType.getId());
         assertEquals(1, result.size());
     }
 }

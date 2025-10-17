@@ -24,13 +24,13 @@ public class RoomController {
 
     @GetMapping("/faculty/{faculty}")
     public ResponseEntity<List<Room>> getRoomsByFaculty(@PathVariable String faculty) {
-        String facultyKey;
+        Faculty facultyKey;
         try{
-            facultyKey = Faculty.valueOf(faculty).name();
+            facultyKey = Faculty.valueOf(faculty);
         } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(roomService.getRoomsByFaculty(facultyKey));
+        return ResponseEntity.ok(roomService.getByFaculty(facultyKey));
     }
 
     @GetMapping("/faculty")
@@ -40,32 +40,32 @@ public class RoomController {
 
     @GetMapping
     public ResponseEntity<List<Room>> getAll() {
-        return ResponseEntity.ok(roomService.getAllRooms());
+        return ResponseEntity.ok(roomService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Room> getRoom(@PathVariable String id) {
-        return ResponseEntity.ok(roomService.get(id));
+    public ResponseEntity<Room> getRoom(@PathVariable Long id) {
+        return ResponseEntity.ok(roomService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<Room> addRoom(@RequestBody Room room) {
         // todo validate input
-        Room saved = roomService.saveRoom(room);
+        Room saved = roomService.save(room);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable String id) {
-        roomService.deleteRoom(id);
+    public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
+        roomService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Room> updateRoom(@PathVariable String id, @RequestBody Room room) {
+    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody Room room) {
         // todo validate input
         room.setId(id);
-        Room updated = roomService.saveRoom(room);
+        Room updated = roomService.save(room);
         return ResponseEntity.ok(updated);
     }
 }

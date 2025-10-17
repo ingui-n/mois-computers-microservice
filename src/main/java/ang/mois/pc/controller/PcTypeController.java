@@ -21,33 +21,33 @@ public class PcTypeController {
 
     @GetMapping
     public ResponseEntity<List<PcType>> getAll() {
-        return ResponseEntity.ok(pcTypeService.getAllTypes());
+        return ResponseEntity.ok(pcTypeService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PcType> getType(@PathVariable String id) {
-        return ResponseEntity.ok(pcTypeService.getType(id));
+    public ResponseEntity<PcType> getType(@PathVariable Long id) {
+        return ResponseEntity.ok(pcTypeService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<PcType> addType(@RequestBody PcType type) {
         // todo validate input
-        PcType saved = pcTypeService.saveType(type);
+        PcType saved = pcTypeService.save(type);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteType(@PathVariable String id) {
-        pcTypeService.deleteType(id);
+    public ResponseEntity<Void> deleteType(@PathVariable Long id) {
+        pcTypeService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PcType> updateRoom(@PathVariable String id, @RequestBody PcType pcType) {
+    public ResponseEntity<PcType> updateRoom(@PathVariable Long id, @RequestBody PcType pcType) {
         // todo validate input
         pcType.setId(id);
 
-        PcType updated = pcTypeService.saveType(pcType);
+        PcType updated = pcTypeService.save(pcType);
         return ResponseEntity.ok(updated);
     }
 }

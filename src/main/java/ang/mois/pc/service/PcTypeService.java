@@ -14,15 +14,15 @@ public class PcTypeService {
         this.pcTypeRepository = pcTypeRepository;
     }
 
-    public List<PcType> getAllTypes() {
+    public List<PcType> getAll() {
         return pcTypeRepository.findAll();
     }
-    public PcType getType(String typeId) {
+    public PcType getById(Long typeId) {
         return pcTypeRepository.findById(typeId)
                 .orElseThrow(() -> new IllegalArgumentException("PcType with id " + typeId + " does not exist"));
     }
 
-    public PcType saveType(PcType type) {
+    public PcType save(PcType type) {
         // check for duplicities
         if(pcTypeRepository.existsById(type.getId())){
             throw new IllegalArgumentException("PcType with id " + type.getId() + " already exists");
@@ -30,7 +30,7 @@ public class PcTypeService {
         return pcTypeRepository.save(type);
     }
 
-    public void deleteType(String typeId) {
+    public void delete(Long typeId) {
         // todo later check for references from pcs ?
         pcTypeRepository.deleteById(typeId);
     }

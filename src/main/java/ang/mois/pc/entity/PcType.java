@@ -1,17 +1,23 @@
 package ang.mois.pc.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
-@Document(collection = "pcTypes")
+import java.util.List;
+
+@Entity
+@Table(name = "pcTypes")
 public class PcType {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private String cpu;
     private String memory;
     private String gpu;
     private String os;
+
+    @OneToMany(mappedBy = "pcType", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pc> pcs;
 
     public PcType(String name, String cpu, String memory, String gpu, String os) {
         this.name = name;
@@ -24,12 +30,12 @@ public class PcType {
     public PcType() {
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
-    public String getId() {
-        return id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -70,5 +76,13 @@ public class PcType {
 
     public void setOs(String os) {
         this.os = os;
+    }
+
+    public List<Pc> getPcs() {
+        return pcs;
+    }
+
+    public void setPcs(List<Pc> pcs) {
+        this.pcs = pcs;
     }
 }

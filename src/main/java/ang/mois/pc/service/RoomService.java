@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.repository.RoomRepository;
 import org.springframework.stereotype.Service;
@@ -14,27 +15,27 @@ public class RoomService {
         this.roomRepository = roomRepository;
     }
 
-    public List<Room> getAllRooms() {
+    public List<Room> getAll() {
         return roomRepository.findAll();
     }
 
-    public Room get(String id) {
+    public Room getById(Long id) {
         return roomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Room with id " + id + " does not exist"));
     }
 
-    public List<Room> getRoomsByFaculty(String faculty) {
+    public List<Room> getByFaculty(Faculty faculty) {
         return roomRepository.findByFaculty(faculty);
     }
 
-    public Room saveRoom(Room room) {
+    public Room save(Room room) {
         if (roomRepository.existsById(room.getId())) {
             throw new IllegalArgumentException("Room with id " + room.getId() + " already exists");
         }
         return roomRepository.save(room);
     }
 
-    public void deleteRoom(String id) {
+    public void delete(Long id) {
         roomRepository.deleteById(id);
     }
 }

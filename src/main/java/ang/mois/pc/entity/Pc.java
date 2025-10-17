@@ -1,31 +1,39 @@
 package ang.mois.pc.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
-@Document(collection = "pcs")
+@Entity
+@Table(name = "pcs")
 public class Pc {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String status;   // ok | broken | unavailable
-    private String typeId;   // reference to pcTypes
-    private String roomId;   // reference to rooms
+    // Each PC belongs to one room
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
 
-    public Pc(String status, String typeId, String roomId) {
+    // Each PC belongs to one pcType
+    @ManyToOne
+    @JoinColumn(name = "pc_type_id", nullable = false)
+    private PcType pcType;
+
+    public Pc(String status, Room room, PcType pcType) {
         this.status = status;
-        this.typeId = typeId;
-        this.roomId = roomId;
+        this.room = room;
+        this.pcType = pcType;
     }
 
     public Pc() {
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
-    public String getId() {
-        return id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getStatus() {
@@ -36,19 +44,19 @@ public class Pc {
         this.status = status;
     }
 
-    public String getTypeId() {
-        return typeId;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setTypeId(String typeId) {
-        this.typeId = typeId;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
-    public String getRoomId() {
-        return roomId;
+    public PcType getPcType() {
+        return pcType;
     }
 
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
+    public void setPcType(PcType pcType) {
+        this.pcType = pcType;
     }
 }
