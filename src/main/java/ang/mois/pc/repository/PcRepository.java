@@ -12,5 +12,5 @@ public interface PcRepository extends JpaRepository<Pc, Long> {
     List<Pc> findByStatus(String status);
     List<Pc> findByRoom(Room room);
     List<Pc> findAllByRoomIn(List<Room> room);
-    List<Pc> findByType(PcType type);
+    List<Pc> findByPcType(PcType type);
 }

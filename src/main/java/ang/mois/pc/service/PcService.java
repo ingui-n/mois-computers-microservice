@@ -1,6 +1,5 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
@@ -64,6 +63,6 @@ public class PcService {
 
 
     public List<Pc> getByType(PcType type) {
-        return pcRepository.findByType(type);
+        return pcRepository.findByPcType(type);
     }
 }
