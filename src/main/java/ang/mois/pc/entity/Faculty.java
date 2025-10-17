@@ -21,6 +21,7 @@ public class Faculty {
     public Faculty(String name, String shortcut) {
         this.name = name;
         this.shortcut = shortcut;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Faculty() {
@@ -52,10 +53,6 @@ public class Faculty {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public List<Room> getRooms() {
