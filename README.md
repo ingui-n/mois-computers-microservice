@@ -1,12 +1,13 @@
 # Computer Management Service
 ## TODOs
-
+- [ ] Relational DB
+- [ ] Separate Faculty table 
+- [ ] Align endpoints with API Gateway
+####
 - [ ] Pagination and Filtering
 - [ ] DTOs without sensitive data
 - [ ] Controller Tests
 - [ ] Add Swagger or sth like that
-- [ ] Authentication
-- [ ] Authorisation for admin endpoints (maybe separate admin endpoints)
 
 ## Initial Structure Ideas
 * Počítače
