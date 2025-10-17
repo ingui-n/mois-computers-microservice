@@ -31,7 +31,6 @@ public class PcTypeService {
     }
 
     public void delete(Long typeId) {
-        // todo later check for references from pcs ?
         pcTypeRepository.deleteById(typeId);
     }
 }

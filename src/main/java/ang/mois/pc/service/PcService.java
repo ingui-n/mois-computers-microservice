@@ -37,7 +37,6 @@ public class PcService {
         return pcOpt.get();
     }
 
-
     public Pc save(Pc pc) {
         if(!roomRepository.existsById(pc.getRoom().getId())){
             throw new IllegalArgumentException("Room with id " + pc.getRoom().getId() + " does not exist");
@@ -49,7 +48,6 @@ public class PcService {
     }
 
     public void delete(Long id) {
-        // todo add the logic on when the pc can be deleted
         pcRepository.deleteById(id);
     }
 
