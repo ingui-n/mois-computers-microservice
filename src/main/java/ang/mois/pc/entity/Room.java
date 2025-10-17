@@ -11,6 +11,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @ManyToOne
+    @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pc> pcs;

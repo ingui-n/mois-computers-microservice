@@ -2,6 +2,7 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
+import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,26 +17,18 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
+    private final FacultyService facultyService;
 
     @Autowired
-    public RoomController(RoomService roomService) {
+    public RoomController(RoomService roomService, FacultyService facultyService) {
         this.roomService = roomService;
+        this.facultyService = facultyService;
     }
 
     @GetMapping("/faculty/{faculty}")
-    public ResponseEntity<List<Room>> getRoomsByFaculty(@PathVariable String faculty) {
-        Faculty facultyKey;
-        try{
-            facultyKey = Faculty.valueOf(faculty);
-        } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<List<Room>> getRoomsByFaculty(@PathVariable Long id) {
+        Faculty facultyKey = facultyService.getById(id);
         return ResponseEntity.ok(roomService.getByFaculty(facultyKey));
-    }
-
-    @GetMapping("/faculty")
-    public ResponseEntity<List<Faculty>> getAllFaculties() {
-        return ResponseEntity.ok(Arrays.stream(Faculty.values()).toList());
     }
 
     @GetMapping
@@ -50,7 +43,6 @@ public class RoomController {
 
     @PostMapping
     public ResponseEntity<Room> addRoom(@RequestBody Room room) {
-        // todo validate input
         Room saved = roomService.save(room);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -63,7 +55,6 @@ public class RoomController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody Room room) {
-        // todo validate input
         room.setId(id);
         Room updated = roomService.save(room);
         return ResponseEntity.ok(updated);
