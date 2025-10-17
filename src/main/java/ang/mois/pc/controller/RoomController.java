@@ -1,34 +1,23 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
-import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rooms")
+@RequestMapping("/room")
 public class RoomController {
 
     private final RoomService roomService;
-    private final FacultyService facultyService;
 
     @Autowired
-    public RoomController(RoomService roomService, FacultyService facultyService) {
+    public RoomController(RoomService roomService) {
         this.roomService = roomService;
-        this.facultyService = facultyService;
-    }
-
-    @GetMapping("/faculty/{faculty}")
-    public ResponseEntity<List<Room>> getRoomsByFaculty(@PathVariable Long id) {
-        Faculty facultyKey = facultyService.getById(id);
-        return ResponseEntity.ok(roomService.getByFaculty(facultyKey));
     }
 
     @GetMapping

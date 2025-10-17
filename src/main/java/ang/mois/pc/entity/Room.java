@@ -2,6 +2,7 @@ package ang.mois.pc.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -10,16 +11,21 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+
     @ManyToOne
-    @JoinColumn(name = "faculty_id", nullable = false)
+    @JoinColumn(name = "faculty_id", nullable = false) // or just id?
     private Faculty faculty;
+
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pc> pcs;
+
+    private String name;
+    private LocalDateTime createdAt;
 
     public Room(String name, Faculty faculty) {
         this.name = name;
         this.faculty = faculty;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Room() {
@@ -55,5 +61,9 @@ public class Room {
 
     public void setPcs(List<Pc> pcs) {
         this.pcs = pcs;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
