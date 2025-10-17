@@ -11,6 +11,8 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "faculty_id", nullable = false) // or just id?
@@ -18,9 +20,6 @@ public class Room {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pc> pcs;
-
-    private String name;
-    private LocalDateTime createdAt;
 
     public Room(String name, Faculty faculty) {
         this.name = name;

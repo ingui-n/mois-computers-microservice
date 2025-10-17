@@ -10,19 +10,17 @@ public class PcType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private String cpu;
-    private String memory;
+    private String ram;
     private String gpu;
     private String os;
 
     @OneToMany(mappedBy = "pcType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pc> pcs;
 
-    public PcType(String name, String cpu, String memory, String gpu, String os) {
-        this.name = name;
+    public PcType(String name, String cpu, String ram, String gpu, String os) {
         this.cpu = cpu;
-        this.memory = memory;
+        this.ram = ram;
         this.gpu = gpu;
         this.os = os;
     }
@@ -38,14 +36,6 @@ public class PcType {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getCpu() {
         return cpu;
     }
@@ -54,12 +44,12 @@ public class PcType {
         this.cpu = cpu;
     }
 
-    public String getMemory() {
-        return memory;
+    public String getRam() {
+        return ram;
     }
 
-    public void setMemory(String memory) {
-        this.memory = memory;
+    public void setRam(String memory) {
+        this.ram = memory;
     }
 
     public String getGpu() {

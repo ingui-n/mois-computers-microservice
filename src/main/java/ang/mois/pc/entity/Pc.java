@@ -2,27 +2,31 @@ package ang.mois.pc.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "pcs")
 public class Pc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String status;   // ok | broken | unavailable
-    // Each PC belongs to one room
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    private LocalDateTime createdAt;
+
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    // Each PC belongs to one pcType
     @ManyToOne
     @JoinColumn(name = "pc_type_id", nullable = false)
     private PcType pcType;
 
-    public Pc(String status, Room room, PcType pcType) {
+    public Pc(Status status, Room room, PcType pcType) {
         this.status = status;
         this.room = room;
         this.pcType = pcType;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Pc() {
@@ -36,11 +40,11 @@ public class Pc {
         this.id = id;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -58,5 +62,9 @@ public class Pc {
 
     public void setPcType(PcType pcType) {
         this.pcType = pcType;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
