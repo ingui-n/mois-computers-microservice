@@ -3,6 +3,7 @@ package ang.mois.pc.service;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
+import ang.mois.pc.entity.Status;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import ang.mois.pc.repository.RoomRepository;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PcService {
@@ -30,11 +30,8 @@ public class PcService {
     }
 
     public Pc getById(Long id) {
-        Optional<Pc> pcOpt = pcRepository.findById(id);
-        if(pcOpt.isEmpty()){
-            throw new IllegalArgumentException("Pc with id " + id + " does not exist");
-        }
-        return pcOpt.get();
+        return pcRepository.findById(id)
+                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
     }
 
     public Pc save(Pc pc) {
@@ -59,8 +56,11 @@ public class PcService {
         return pcRepository.findAllByRoomIn(room);
     }
 
-
     public List<Pc> getByType(PcType type) {
         return pcRepository.findByPcType(type);
+    }
+
+    public List<Pc> getByStatus(Status status){
+        return pcRepository.findByStatus(status);
     }
 }
