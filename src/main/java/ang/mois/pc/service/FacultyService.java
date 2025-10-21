@@ -25,6 +25,12 @@ public class FacultyService {
     }
 
     public Faculty save(FacultyDto facultyDto) {
+        if (facultyDto.name() == null || facultyDto.name().isBlank()){
+            throw new IllegalArgumentException("Faculty name cannot be empty");
+        }
+        if (facultyDto.shortcut() == null || facultyDto.shortcut().isBlank()) {
+            throw new IllegalArgumentException("Faculty shortcut cannot be empty");
+        }
         Faculty faculty = new Faculty(facultyDto.name(), facultyDto.shortcut());
         return facultyRepository.save(faculty);
     }

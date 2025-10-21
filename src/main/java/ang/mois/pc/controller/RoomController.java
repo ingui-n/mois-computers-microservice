@@ -1,6 +1,11 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.dto.CreateRoomDto;
+import ang.mois.pc.dto.FacultyIdDto;
+import ang.mois.pc.dto.RoomDto;
+import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
+import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,15 +19,18 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
+    private final FacultyService facultyService;
 
     @Autowired
-    public RoomController(RoomService roomService) {
+    public RoomController(RoomService roomService, FacultyService facultyService) {
         this.roomService = roomService;
+        this.facultyService = facultyService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Room>> getAll() {
-        return ResponseEntity.ok(roomService.getAll());
+    public ResponseEntity<List<Room>> getAll(@RequestBody FacultyIdDto facultyIdDto) {
+        Faculty faculty = facultyService.getById(facultyIdDto.facultyId());
+        return ResponseEntity.ok(roomService.getByFaculty(faculty));
     }
 
     @GetMapping("/{id}")
@@ -31,8 +39,8 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<Room> addRoom(@RequestBody Room room) {
-        Room saved = roomService.save(room);
+    public ResponseEntity<Room> addRoom(@RequestBody CreateRoomDto createRoomDto) {
+        Room saved = roomService.save(createRoomDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
@@ -43,9 +51,8 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody Room room) {
-        room.setId(id);
-        Room updated = roomService.save(room);
+    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody RoomDto roomDto) {
+        Room updated = roomService.update(id, roomDto);
         return ResponseEntity.ok(updated);
     }
 }

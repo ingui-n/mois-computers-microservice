@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.dto.CreateRoomDto;
 import ang.mois.pc.dto.RoomDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
@@ -11,9 +12,11 @@ import java.util.List;
 @Service
 public class RoomService {
     private final RoomRepository roomRepository;
+    private final FacultyService facultyService;
 
-    public RoomService(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository, FacultyService facultyService) {
         this.roomRepository = roomRepository;
+        this.facultyService = facultyService;
     }
 
     public List<Room> getAll() {
@@ -29,10 +32,9 @@ public class RoomService {
         return roomRepository.findByFaculty(faculty);
     }
 
-    public Room save(Room room) {
-        if (roomRepository.existsById(room.getId())) {
-            throw new IllegalArgumentException("Room with id " + room.getId() + " already exists");
-        }
+    public Room save(CreateRoomDto createRoomDto) {
+        Faculty faculty = facultyService.getById(createRoomDto.facultyId());
+        Room room = new Room(createRoomDto.name(), faculty);
         return roomRepository.save(room);
     }
 
