@@ -10,6 +10,7 @@ public class PcType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
     private String cpu;
     private String ram;
     private String gpu;
@@ -19,6 +20,7 @@ public class PcType {
     private List<Pc> pcs;
 
     public PcType(String name, String cpu, String ram, String gpu, String os) {
+        this.name = name;
         this.cpu = cpu;
         this.ram = ram;
         this.gpu = gpu;
@@ -34,6 +36,14 @@ public class PcType {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCpu() {

@@ -68,8 +68,8 @@ class RoomRepositoryTest {
         PcType pcType = new PcType("Office", "i5", "16GB", "GTX 1050", "Windows 10");
         pcTypeRepository.save(pcType);
 
-        Pc pc1 = new Pc(Status.OK, null, pcType);
-        Pc pc2 = new Pc(Status.BROKEN, null, pcType);
+        Pc pc1 = new Pc("ok", Status.OK, null, pcType);
+        Pc pc2 = new Pc("broken", Status.BROKEN, null, pcType);
         pcType.setPcs(List.of(pc1, pc2));
 
         Room room = new Room("B202", faculty);

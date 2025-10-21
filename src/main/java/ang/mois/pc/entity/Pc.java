@@ -10,8 +10,12 @@ public class Pc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
     private LocalDateTime createdAt;
 
     @ManyToOne
@@ -22,7 +26,8 @@ public class Pc {
     @JoinColumn(name = "pc_type_id", nullable = false)
     private PcType pcType;
 
-    public Pc(Status status, Room room, PcType pcType) {
+    public Pc(String name, Status status, Room room, PcType pcType) {
+        this.name = name;
         this.status = status;
         this.room = room;
         this.pcType = pcType;
@@ -38,6 +43,14 @@ public class Pc {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Status getStatus() {
