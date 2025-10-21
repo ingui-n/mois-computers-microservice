@@ -29,7 +29,7 @@ public class FacultyController {
 
     @PostMapping
     public ResponseEntity<Faculty> addFaculty(@RequestBody FacultyDto facultyDto) {
-        return ResponseEntity.ok(facultyService.save(facultyDto));
+        return ResponseEntity.status(201).body(facultyService.save(facultyDto));
     }
 
     @PutMapping("/{id}")
