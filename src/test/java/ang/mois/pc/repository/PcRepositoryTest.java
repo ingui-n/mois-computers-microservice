@@ -1,7 +1,6 @@
 package ang.mois.pc.repository;
 
 import ang.mois.pc.entity.*;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -33,13 +32,13 @@ class PcRepositoryTest {
         Room room = roomRepository.save(new Room("A101", faculty));
         PcType type = pcTypeRepository.save(new PcType("Office", "i5", "16GB", "GTX 1060", "Windows"));
 
-        Pc pc = new Pc("ok", Status.OK, room, type);
+        Pc pc = new Pc("ok", Status.AVAILABLE, room, type);
         Pc saved = pcRepository.save(pc);
 
         Optional<Pc> found = pcRepository.findById(saved.getId());
 
         assertThat(found).isPresent();
-        assertThat(found.get().getStatus()).isEqualTo(Status.OK);
+        assertThat(found.get().getStatus()).isEqualTo(Status.AVAILABLE);
         assertThat(found.get().getRoom().getName()).isEqualTo("A101");
         assertThat(found.get().getPcType().getCpu()).isEqualTo("i5");
     }
@@ -50,11 +49,11 @@ class PcRepositoryTest {
         Room room = roomRepository.save(new Room("B102", faculty));
         PcType type = pcTypeRepository.save(new PcType("Gaming", "Ryzen 9", "32GB", "RTX 4080", "Windows 11"));
 
-        Pc okPc = pcRepository.save(new Pc("ok", Status.OK, room, type));
-        Pc brokenPc = pcRepository.save(new Pc("broken", Status.BROKEN, room, type));
+        Pc okPc = pcRepository.save(new Pc("ok", Status.AVAILABLE, room, type));
+        Pc brokenPc = pcRepository.save(new Pc("broken", Status.NOT_AVAILABLE, room, type));
 
-        List<Pc> ok = pcRepository.findByStatus(Status.OK);
-        List<Pc> broken = pcRepository.findByStatus(Status.BROKEN);
+        List<Pc> ok = pcRepository.findByStatus(Status.AVAILABLE);
+        List<Pc> broken = pcRepository.findByStatus(Status.NOT_AVAILABLE);
 
         assertThat(ok).containsExactly(okPc);
         assertThat(broken).containsExactly(brokenPc);
@@ -67,8 +66,8 @@ class PcRepositoryTest {
         Room room2 = roomRepository.save(new Room("C202", faculty));
         PcType type = pcTypeRepository.save(new PcType("Workstation", "i7", "32GB", "RTX 3070", "Linux"));
 
-        Pc pc1 = pcRepository.save(new Pc("ok", Status.OK, room1, type));
-        Pc pc2 = pcRepository.save(new Pc("broken", Status.BROKEN, room2, type));
+        Pc pc1 = pcRepository.save(new Pc("ok", Status.AVAILABLE, room1, type));
+        Pc pc2 = pcRepository.save(new Pc("broken", Status.NOT_AVAILABLE, room2, type));
 
         List<Pc> pcsRoom1 = pcRepository.findByRoom(room1);
         List<Pc> pcsRoom2 = pcRepository.findByRoom(room2);
@@ -85,9 +84,9 @@ class PcRepositoryTest {
         Room r3 = roomRepository.save(new Room("D103", faculty));
         PcType type = pcTypeRepository.save(new PcType("Design", "M1", "16GB", "Integrated", "macOS"));
 
-        Pc pc1 = pcRepository.save(new Pc("ok", Status.OK, r1, type));
-        Pc pc2 = pcRepository.save(new Pc("ok", Status.OK, r2, type));
-        pcRepository.save(new Pc("ok", Status.OK, r3, type)); // not included
+        Pc pc1 = pcRepository.save(new Pc("ok", Status.AVAILABLE, r1, type));
+        Pc pc2 = pcRepository.save(new Pc("ok", Status.AVAILABLE, r2, type));
+        pcRepository.save(new Pc("ok", Status.AVAILABLE, r3, type)); // not included
 
         List<Pc> found = pcRepository.findAllByRoomIn(List.of(r1, r2));
 
@@ -102,8 +101,8 @@ class PcRepositoryTest {
         PcType officeType = pcTypeRepository.save(new PcType("Office", "i5", "8GB", "Integrated", "Windows 10"));
         PcType gamingType = pcTypeRepository.save(new PcType("Gaming", "Ryzen 7", "16GB", "RTX 2060", "Windows 11"));
 
-        Pc pc1 = pcRepository.save(new Pc("ok", Status.OK, room, officeType));
-        Pc pc2 = pcRepository.save(new Pc("ok", Status.OK, room, gamingType));
+        Pc pc1 = pcRepository.save(new Pc("ok", Status.AVAILABLE, room, officeType));
+        Pc pc2 = pcRepository.save(new Pc("ok", Status.AVAILABLE, room, gamingType));
 
         List<Pc> officePcs = pcRepository.findByPcType(officeType);
         List<Pc> gamingPcs = pcRepository.findByPcType(gamingType);
