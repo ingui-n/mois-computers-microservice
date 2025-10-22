@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/types")
+@RequestMapping("/computerConfig")
 public class PcTypeController {
     private final PcTypeService pcTypeService;
 
@@ -32,6 +32,7 @@ public class PcTypeController {
     @PostMapping
     public ResponseEntity<PcType> addType(@RequestBody PcType type) {
         // todo validate input
+        // todo dto?
         PcType saved = pcTypeService.save(type);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -44,9 +45,8 @@ public class PcTypeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PcType> updateRoom(@PathVariable Long id, @RequestBody PcType pcType) {
-        // todo validate input
         pcType.setId(id);
-
+        // todo dto?
         PcType updated = pcTypeService.save(pcType);
         return ResponseEntity.ok(updated);
     }

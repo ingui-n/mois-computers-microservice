@@ -36,6 +36,7 @@ public class FacultyService {
     }
 
     public void delete(Long id) {
+        // Delete proběhne pouze pokud neexistuje ani jedna computerRoom, která by měla FK facultyId. TODO
         facultyRepository.deleteById(id);
     }
 

@@ -1,5 +1,7 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.dto.CreatePcDto;
+import ang.mois.pc.dto.UpdatePcDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PcService {
@@ -34,13 +37,32 @@ public class PcService {
                 .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
     }
 
-    public Pc save(Pc pc) {
-        if(!roomRepository.existsById(pc.getRoom().getId())){
-            throw new IllegalArgumentException("Room with id " + pc.getRoom().getId() + " does not exist");
+    public Pc save(CreatePcDto createPcDto) {
+        Optional<Room> room = roomRepository.findById(createPcDto.computerRoomId());
+        if(room.isEmpty()){
+            throw new IllegalArgumentException("Room with id " + createPcDto.computerRoomId() + " does not exist");
         }
-        if(!pcTypeRepository.existsById(pc.getPcType().getId())){
-            throw new IllegalArgumentException("PcType with id " + pc.getPcType().getId() + " does not exist");
+
+        Optional<PcType> type = pcTypeRepository.findById(createPcDto.configId());
+        if(type.isEmpty()){
+            throw new IllegalArgumentException("PcType with id " + createPcDto.configId() + " does not exist");
         }
+
+        Pc pc = new Pc(
+            createPcDto.name(),
+            createPcDto.available(),
+            room.get(),
+            type.get()
+        );
+
+        return pcRepository.save(pc);
+    }
+
+    public Pc update(Long id, UpdatePcDto updatePcDto) {
+        Pc pc = getById(id);
+        // todo merge etities
+        if(updatePcDto.name() != null) pc.setName(updatePcDto.name());
+
         return pcRepository.save(pc);
     }
 
@@ -52,15 +74,7 @@ public class PcService {
         return pcRepository.findByRoom(room);
     }
 
-    public List<Pc> getByRooms(List<Room> room) {
-        return pcRepository.findAllByRoomIn(room);
-    }
-
     public List<Pc> getByType(PcType type) {
         return pcRepository.findByPcType(type);
-    }
-
-    public List<Pc> getByStatus(Status status){
-        return pcRepository.findByStatus(status);
     }
 }

@@ -13,8 +13,7 @@ public class Pc {
 
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private boolean available;
 
     private LocalDateTime createdAt;
 
@@ -26,9 +25,9 @@ public class Pc {
     @JoinColumn(name = "pc_type_id", nullable = false)
     private PcType pcType;
 
-    public Pc(String name, Status status, Room room, PcType pcType) {
+    public Pc(String name, boolean available, Room room, PcType pcType) {
         this.name = name;
-        this.status = status;
+        this.available = available;
         this.room = room;
         this.pcType = pcType;
         this.createdAt = LocalDateTime.now();
@@ -53,12 +52,12 @@ public class Pc {
         this.name = name;
     }
 
-    public Status getStatus() {
-        return status;
+    public boolean isAvailable() {
+        return available;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     public Room getRoom() {

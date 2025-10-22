@@ -62,8 +62,8 @@ class PcTypeRepositoryTest {
 
         // Create PcType and its PCs
         PcType pcType = new PcType("Workstation", "Ryzen 9", "64GB", "RTX 4080", "Windows 11");
-        Pc pc1 = new Pc("ok", Status.AVAILABLE, room, pcType);
-        Pc pc2 = new Pc("ok", Status.AVAILABLE, room, pcType);
+        Pc pc1 = new Pc("ok", true, room, pcType);
+        Pc pc2 = new Pc("ok", true, room, pcType);
 
         pcType.setPcs(List.of(pc1, pc2));
 

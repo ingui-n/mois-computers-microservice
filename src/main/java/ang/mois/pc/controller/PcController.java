@@ -1,5 +1,8 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.dto.CreatePcDto;
+import ang.mois.pc.dto.RoomIdDto;
+import ang.mois.pc.dto.UpdatePcDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
@@ -13,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pc")
+@RequestMapping("/computer")
 public class PcController {
     private final PcService pcService;
     private final RoomService roomService;
@@ -30,22 +33,29 @@ public class PcController {
         return ResponseEntity.ok(pcService.getAll());
     }
 
-    @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<Pc>> getByRoom(@PathVariable Long roomId) {
-        Room room = roomService.getById(roomId);
+    @GetMapping()
+    public ResponseEntity<List<Pc>> getByRoom(@RequestBody RoomIdDto roomIdDto) {
+        Room room = roomService.getById(roomIdDto.computerRoomId());
         return ResponseEntity.ok(pcService.getByRoom(room));
     }
 
-    @GetMapping("/type/{typeId}")
-    public ResponseEntity<List<Pc>> getByType(@PathVariable Long typeId) {
-        PcType pcType = pcTypeService.getById(typeId);
-        return ResponseEntity.ok(pcService.getByType(pcType));
+    @GetMapping("/{id}")
+    public ResponseEntity<Pc> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(pcService.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Pc> addPc(@RequestBody Pc pc) {
-        Pc saved = pcService.save(pc);
+    public ResponseEntity<Pc> addPc(@RequestBody CreatePcDto createPcDto) {
+        // todo dto?
+        Pc saved = pcService.save(createPcDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Pc> updatePc(@PathVariable Long id, @RequestBody UpdatePcDto updatePcDto) {
+        // todo dto?
+        Pc updated = pcService.update(id, updatePcDto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")

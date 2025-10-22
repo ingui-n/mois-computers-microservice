@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/room")
+@RequestMapping("/computerRoom")
 public class RoomController {
 
     private final RoomService roomService;
@@ -25,6 +25,11 @@ public class RoomController {
     public RoomController(RoomService roomService, FacultyService facultyService) {
         this.roomService = roomService;
         this.facultyService = facultyService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Room>> getAll() {
+        return ResponseEntity.ok(roomService.getAll());
     }
 
     @GetMapping
