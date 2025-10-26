@@ -47,14 +47,12 @@ public class PcController {
 
     @PostMapping
     public ResponseEntity<Pc> addPc(@RequestBody CreatePcDto createPcDto) {
-        // todo dto?
         Pc saved = pcService.save(createPcDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Pc> updatePc(@PathVariable Long id, @RequestBody UpdatePcDto updatePcDto) {
-        // todo dto?
         Pc updated = pcService.update(id, updatePcDto);
         return ResponseEntity.ok(updated);
     }
