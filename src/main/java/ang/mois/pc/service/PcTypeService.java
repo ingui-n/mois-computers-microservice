@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.dto.PcTypeDto;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.repository.PcTypeRepository;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,26 @@ public class PcTypeService {
                 .orElseThrow(() -> new IllegalArgumentException("PcType with id " + typeId + " does not exist"));
     }
 
-    public PcType save(PcType type) {
-        // check for duplicities
-        if(pcTypeRepository.existsById(type.getId())){
-            throw new IllegalArgumentException("PcType with id " + type.getId() + " already exists");
-        }
-        return pcTypeRepository.save(type);
+    public PcType save(PcTypeDto type) {
+        PcType pcType = new PcType(
+                type.name(),
+                type.cpu(),
+                type.ram(),
+                type.gpu()
+        );
+        return pcTypeRepository.save(pcType);
     }
 
     public void delete(Long typeId) {
         pcTypeRepository.deleteById(typeId);
+    }
+
+    public PcType update(Long id, PcTypeDto pcType) {
+        PcType type = getById(id);
+        if (pcType.name() != null) type.setName(pcType.name());
+        if (pcType.cpu() != null) type.setCpu(pcType.cpu());
+        if (pcType.ram() != null) type.setRam(pcType.ram());
+        if (pcType.gpu() != null) type.setGpu(pcType.gpu());
+        return pcTypeRepository.save(type);
     }
 }
