@@ -5,7 +5,6 @@ import ang.mois.pc.dto.UpdatePcDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
-import ang.mois.pc.entity.Status;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import ang.mois.pc.repository.RoomRepository;
