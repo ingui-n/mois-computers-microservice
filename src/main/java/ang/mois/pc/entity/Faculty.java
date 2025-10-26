@@ -17,7 +17,8 @@ public class Faculty {
     private Time reservationTimeStart;
     private Time reservationTimeEnd;
     private int maxUserReservationCount; // ? of all time or what does this mean
-    private int maxUserReservationTimeWeekly;
+    private int maxUserReservationTime; // for 1 reservation in minutes
+    private int maxUserReservationTimeWeekly; // weekly in minutes
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
