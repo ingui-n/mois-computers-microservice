@@ -1,43 +1,10 @@
 # Computer Management Service
 ## TODOs
-- [ ] Relational DB
-- [ ] Separate Faculty table 
-- [ ] Align endpoints with API Gateway
+- [ ] Faculty fields add
+- [ ] Map responses to flat FK (except the pc unwrap + always unwrap pc configuration)
+- [ ] Verify naming alignment in responses with API
+- [ ] Separate DTOs for update
 ####
 - [ ] Pagination and Filtering
-- [ ] DTOs without sensitive data
 - [ ] Controller Tests
 - [ ] Add Swagger or sth like that
-
-## Initial Structure Ideas
-* Počítače
-  * Konfigurace - Typ
-  * Lokace
-  * místnost
-* Místnosti
-  * Lokace
-  * Fakulta
-  * Gps 
-* Fakulta
-
-
-## CRUD + API 
-* Public endpoints (used by Reservation/Frontend):
-  * Get all PCs (with optional filters: by faculty, by room, by type).
-  * Get details of a single PC.
-  * Get list of types, faculties, rooms.
-* Admin endpoints:
-  * Create/update/delete PCs.
-  * Create/update/delete types.
-  * Create/update/delete rooms.
-
-## Use Cases
-* Pridani PC
-* Odstranění PC
-  * Ověření že není žádná rezervace na PC 
-  * Odstranění PC
-* Pridani/Odstranění místnosti 
-
-
-## Integration notes
-* Vrat vsechny PC per fakultu / mistnost
