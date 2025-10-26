@@ -14,17 +14,15 @@ public class PcType {
     private String cpu;
     private String ram;
     private String gpu;
-    private String os;
 
     @OneToMany(mappedBy = "pcType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pc> pcs;
 
-    public PcType(String name, String cpu, String ram, String gpu, String os) {
+    public PcType(String name, String cpu, String ram, String gpu) {
         this.name = name;
         this.cpu = cpu;
         this.ram = ram;
         this.gpu = gpu;
-        this.os = os;
     }
 
     public PcType() {
@@ -68,14 +66,6 @@ public class PcType {
 
     public void setGpu(String gpu) {
         this.gpu = gpu;
-    }
-
-    public String getOs() {
-        return os;
-    }
-
-    public void setOs(String os) {
-        this.os = os;
     }
 
     public List<Pc> getPcs() {

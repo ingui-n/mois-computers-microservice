@@ -65,7 +65,7 @@ class RoomRepositoryTest {
         Faculty faculty = new Faculty("Faculty of Engineering", "FE");
         facultyRepository.save(faculty);
 
-        PcType pcType = new PcType("Office", "i5", "16GB", "GTX 1050", "Windows 10");
+        PcType pcType = new PcType("Office", "i5", "16GB", "GTX 1050");
         pcTypeRepository.save(pcType);
 
         Pc pc1 = new Pc("ok", true, null, pcType);

@@ -23,7 +23,7 @@ class PcTypeRepositoryTest {
 
     @Test
     void testSaveAndFindById() {
-        PcType pcType = new PcType("Gaming", "Intel i9", "32GB", "RTX 4090", "Windows 11");
+        PcType pcType = new PcType("Gaming", "Intel i9", "32GB", "RTX 4090");
         PcType saved = pcTypeRepository.save(pcType);
 
         Optional<PcType> found = pcTypeRepository.findById(saved.getId());
@@ -33,21 +33,18 @@ class PcTypeRepositoryTest {
         assertThat(found.get().getCpu()).isEqualTo("Intel i9");
         assertThat(found.get().getRam()).isEqualTo("32GB");
         assertThat(found.get().getGpu()).isEqualTo("RTX 4090");
-        assertThat(found.get().getOs()).isEqualTo("Windows 11");
     }
 
     @Test
     void testUpdatePcType() {
-        PcType pcType = new PcType("Office", "Intel i5", "16GB", "GTX 1060", "Ubuntu");
+        PcType pcType = new PcType("Office", "Intel i5", "16GB", "GTX 1060");
         PcType saved = pcTypeRepository.save(pcType);
 
         saved.setCpu("Intel i7");
-        saved.setOs("Fedora");
         pcTypeRepository.save(saved);
 
         PcType updated = pcTypeRepository.findById(saved.getId()).orElseThrow();
         assertThat(updated.getCpu()).isEqualTo("Intel i7");
-        assertThat(updated.getOs()).isEqualTo("Fedora");
     }
 
     @Test
@@ -61,7 +58,7 @@ class PcTypeRepositoryTest {
         facultyRepository.save(faculty);
 
         // Create PcType and its PCs
-        PcType pcType = new PcType("Workstation", "Ryzen 9", "64GB", "RTX 4080", "Windows 11");
+        PcType pcType = new PcType("Workstation", "Ryzen 9", "64GB", "RTX 4080");
         Pc pc1 = new Pc("ok", true, room, pcType);
         Pc pc2 = new Pc("ok", true, room, pcType);
 

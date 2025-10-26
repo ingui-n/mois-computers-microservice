@@ -30,7 +30,7 @@ class PcRepositoryTest {
     void testSaveAndFindById() {
         Faculty faculty = facultyRepository.save(new Faculty("Faculty of IT", "FIT"));
         Room room = roomRepository.save(new Room("A101", faculty));
-        PcType type = pcTypeRepository.save(new PcType("Office", "i5", "16GB", "GTX 1060", "Windows"));
+        PcType type = pcTypeRepository.save(new PcType("Office", "i5", "16GB", "GTX 1060"));
 
         Pc pc = new Pc("ok", true, room, type);
         Pc saved = pcRepository.save(pc);
@@ -48,7 +48,7 @@ class PcRepositoryTest {
         Faculty faculty = facultyRepository.save(new Faculty("Faculty of Engineering", "FE"));
         Room room1 = roomRepository.save(new Room("C201", faculty));
         Room room2 = roomRepository.save(new Room("C202", faculty));
-        PcType type = pcTypeRepository.save(new PcType("Workstation", "i7", "32GB", "RTX 3070", "Linux"));
+        PcType type = pcTypeRepository.save(new PcType("Workstation", "i7", "32GB", "RTX 3070"));
 
         Pc pc1 = pcRepository.save(new Pc("ok", true, room1, type));
         Pc pc2 = pcRepository.save(new Pc("broken", false, room2, type));
@@ -66,7 +66,7 @@ class PcRepositoryTest {
         Room r1 = roomRepository.save(new Room("D101", faculty));
         Room r2 = roomRepository.save(new Room("D102", faculty));
         Room r3 = roomRepository.save(new Room("D103", faculty));
-        PcType type = pcTypeRepository.save(new PcType("Design", "M1", "16GB", "Integrated", "macOS"));
+        PcType type = pcTypeRepository.save(new PcType("Design", "M1", "16GB", "Integrated"));
 
         Pc pc1 = pcRepository.save(new Pc("ok", true, r1, type));
         Pc pc2 = pcRepository.save(new Pc("ok", true, r2, type));
@@ -82,8 +82,8 @@ class PcRepositoryTest {
     void testFindByPcType() {
         Faculty faculty = facultyRepository.save(new Faculty("Faculty of Business", "FB"));
         Room room = roomRepository.save(new Room("E101", faculty));
-        PcType officeType = pcTypeRepository.save(new PcType("Office", "i5", "8GB", "Integrated", "Windows 10"));
-        PcType gamingType = pcTypeRepository.save(new PcType("Gaming", "Ryzen 7", "16GB", "RTX 2060", "Windows 11"));
+        PcType officeType = pcTypeRepository.save(new PcType("Office", "i5", "8GB", "Integrated"));
+        PcType gamingType = pcTypeRepository.save(new PcType("Gaming", "Ryzen 7", "16GB", "RTX 2060"));
 
         Pc pc1 = pcRepository.save(new Pc("ok", true, room, officeType));
         Pc pc2 = pcRepository.save(new Pc("ok", true, room, gamingType));
