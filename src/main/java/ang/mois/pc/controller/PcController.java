@@ -1,13 +1,10 @@
 package ang.mois.pc.controller;
 
 import ang.mois.pc.dto.CreatePcDto;
-import ang.mois.pc.dto.RoomIdDto;
 import ang.mois.pc.dto.UpdatePcDto;
 import ang.mois.pc.entity.Pc;
-import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
-import ang.mois.pc.service.PcTypeService;
 import ang.mois.pc.service.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +17,10 @@ import java.util.List;
 public class PcController {
     private final PcService pcService;
     private final RoomService roomService;
-    private final PcTypeService pcTypeService;
 
-    public PcController(PcService pcService, RoomService roomService, PcTypeService pcTypeService) {
+    public PcController(PcService pcService, RoomService roomService) {
         this.pcService = pcService;
         this.roomService = roomService;
-        this.pcTypeService = pcTypeService;
     }
 
     @GetMapping
@@ -34,13 +29,19 @@ public class PcController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Pc>> getByRoom(@RequestBody RoomIdDto roomIdDto) {
-        Room room = roomService.getById(roomIdDto.computerRoomId());
+    public ResponseEntity<List<Pc>> getByRoom(@RequestParam(name="computerRoomId") Long computerRoomId) {
+        Room room = roomService.getById(computerRoomId);
         return ResponseEntity.ok(pcService.getByRoom(room));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Pc> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(pcService.getById(id));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Pc> getById(@PathVariable Long id, @RequestParam(name="configId") boolean unwrap) {
+        // todo make unwrap
         return ResponseEntity.ok(pcService.getById(id));
     }
 

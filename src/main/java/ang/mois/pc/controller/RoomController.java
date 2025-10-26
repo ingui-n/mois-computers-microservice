@@ -1,7 +1,6 @@
 package ang.mois.pc.controller;
 
 import ang.mois.pc.dto.CreateRoomDto;
-import ang.mois.pc.dto.FacultyIdDto;
 import ang.mois.pc.dto.RoomDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
@@ -33,8 +32,8 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Room>> getAll(@RequestBody FacultyIdDto facultyIdDto) {
-        Faculty faculty = facultyService.getById(facultyIdDto.facultyId());
+    public ResponseEntity<List<Room>> getAll(@RequestParam(name = "facultyId") Long facultyId) {
+        Faculty faculty = facultyService.getById(facultyId);
         return ResponseEntity.ok(roomService.getByFaculty(faculty));
     }
 
