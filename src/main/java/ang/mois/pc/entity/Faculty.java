@@ -2,6 +2,7 @@ package ang.mois.pc.entity;
 
 import jakarta.persistence.*;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,6 +14,10 @@ public class Faculty {
     private Long id;
     private String name;
     private String shortcut;
+    private Time reservationTimeStart;
+    private Time reservationTimeEnd;
+    private int maxUserReservationCount; // ? of all time or what does this mean
+    private int maxUserReservationTimeWeekly;
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
