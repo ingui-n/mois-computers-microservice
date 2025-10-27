@@ -4,7 +4,7 @@ import org.springframework.lang.Nullable;
 
 public record UpdatePcDto(
         @Nullable String name,
-        @Nullable boolean available,
+        @Nullable Boolean available,
         @Nullable Long computerRoomId,
         @Nullable Long configId
 ) {

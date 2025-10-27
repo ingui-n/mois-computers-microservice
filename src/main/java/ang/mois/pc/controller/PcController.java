@@ -28,7 +28,7 @@ public class PcController {
         return ResponseEntity.ok(pcService.getAll());
     }
 
-    @GetMapping()
+    @GetMapping(params="computerRoomId")
     public ResponseEntity<List<Pc>> getByRoom(@RequestParam(name="computerRoomId") Long computerRoomId) {
         Room room = roomService.getById(computerRoomId);
         return ResponseEntity.ok(pcService.getByRoom(room));
@@ -39,22 +39,20 @@ public class PcController {
         return ResponseEntity.ok(pcService.getById(id));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Pc> getById(@PathVariable Long id, @RequestParam(name="configId") boolean unwrap) {
+    @GetMapping(value="/{id}", params = "unwrap")
+    public ResponseEntity<Pc> getById(@PathVariable Long id, @RequestParam(name="unwrap") boolean unwrap) {
         // todo make unwrap
         return ResponseEntity.ok(pcService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<Pc> addPc(@RequestBody CreatePcDto createPcDto) {
-        // todo dto?
         Pc saved = pcService.save(createPcDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Pc> updatePc(@PathVariable Long id, @RequestBody UpdatePcDto updatePcDto) {
-        // todo dto?
         Pc updated = pcService.update(id, updatePcDto);
         return ResponseEntity.ok(updated);
     }
