@@ -31,7 +31,7 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getAll());
     }
 
-    @GetMapping
+    @GetMapping(params="facultyId")
     public ResponseEntity<List<Room>> getAll(@RequestParam(name = "facultyId") Long facultyId) {
         Faculty faculty = facultyService.getById(facultyId);
         return ResponseEntity.ok(roomService.getByFaculty(faculty));
