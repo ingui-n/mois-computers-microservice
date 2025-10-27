@@ -1,5 +1,19 @@
 services:
-  postgres:
+  mois-computers-app:
+    build:
+      dockerfile: docker/Dockerfile
+      context: ../
+    ports:
+      - "${APP_PORT}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://mois-computers-postgres:5432/mydatabase
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+    restart: unless-stopped
+    depends_on:
+      - mois-computers-postgres
+
+  mois-computers-postgres:
     image: postgres:16
     container_name: postgres
     restart: unless-stopped
@@ -12,7 +26,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  pgadmin:
+  mois-computers-pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
     restart: unless-stopped
@@ -22,7 +36,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
-      - postgres
+      - mois-computers-postgres
 
 volumes:
   postgres_data:
