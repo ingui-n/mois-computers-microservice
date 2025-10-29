@@ -1,5 +1,6 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.dto.PcTypeDto;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.service.PcTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,7 @@ public class PcTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<PcType> addType(@RequestBody PcType type) {
-        // todo validate input
-        // todo dto?
+    public ResponseEntity<PcType> addType(@RequestBody PcTypeDto type) {
         PcType saved = pcTypeService.save(type);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -44,10 +43,8 @@ public class PcTypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PcType> updateRoom(@PathVariable Long id, @RequestBody PcType pcType) {
-        pcType.setId(id);
-        // todo dto?
-        PcType updated = pcTypeService.save(pcType);
+    public ResponseEntity<PcType> updatePcType(@PathVariable Long id, @RequestBody PcTypeDto pcType) {
+        PcType updated = pcTypeService.update(id, pcType);
         return ResponseEntity.ok(updated);
     }
 }

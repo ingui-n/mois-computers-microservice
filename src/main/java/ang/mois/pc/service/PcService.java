@@ -59,8 +59,25 @@ public class PcService {
 
     public Pc update(Long id, UpdatePcDto updatePcDto) {
         Pc pc = getById(id);
-        // todo merge etities
+        // merge etities
         if(updatePcDto.name() != null) pc.setName(updatePcDto.name());
+        if(updatePcDto.available() != null) pc.setAvailable(updatePcDto.available());
+
+        if(updatePcDto.computerRoomId() != null) {
+            Optional<Room> room = roomRepository.findById(updatePcDto.computerRoomId());
+            if(room.isEmpty()){
+                throw new IllegalArgumentException("Room with id " + updatePcDto.computerRoomId() + " does not exist");
+            }
+            pc.setRoom(room.get());
+        }
+
+        if(updatePcDto.configId() != null) {
+            Optional<PcType> type = pcTypeRepository.findById(updatePcDto.configId());
+            if(type.isEmpty()){
+                throw new IllegalArgumentException("PcType with id " + updatePcDto.configId() + " does not exist");
+            }
+            pc.setPcType(type.get());
+        }
 
         return pcRepository.save(pc);
     }
