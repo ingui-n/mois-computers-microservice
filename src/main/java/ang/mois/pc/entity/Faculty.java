@@ -78,6 +78,10 @@ public class Faculty {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Time getReservationTimeStart() {
         return reservationTimeStart;
     }

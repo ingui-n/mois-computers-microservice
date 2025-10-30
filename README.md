@@ -1,8 +1,11 @@
 # Computer Management Service
 ## TODOs
-- [ ] Faculty fields add - only default or optionally for create/update faculty?
-- [ ] Map responses to flat FK (except the pc unwrap + always unwrap pc configuration)
-- [ ] Verify naming alignment in responses with API
+- [x] Faculty fields add to create and update 
+- [ ] @Valid + mapper for Room, Type, Pc
+- [ ] API Responses
+  - [ ] Map responses to flat FK (except the pc unwrap + always unwrap pc configuration)
+  - [ ] Verify naming alignment in responses with API
+- [ ] Delete logic
 
 #### Additionally
 - [ ] Add Swagger or sth like that
