@@ -4,10 +4,10 @@ import ang.mois.pc.dto.PcDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
+import ang.mois.pc.mapper.PcMapper;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import ang.mois.pc.repository.RoomRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +19,14 @@ public class PcService {
     private final PcRepository pcRepository;
     private final RoomRepository roomRepository;
     private final PcTypeRepository pcTypeRepository;
-    private final ModelMapper modelMapper;
+    private final PcMapper pcMapper;
 
     @Autowired
-    public PcService(PcRepository pcRepository, RoomRepository roomRepository, PcTypeRepository pcTypeRepository, ModelMapper modelMapper) {
+    public PcService(PcRepository pcRepository, RoomRepository roomRepository, PcTypeRepository pcTypeRepository, PcMapper pcMapper) {
         this.pcRepository = pcRepository;
         this.roomRepository = roomRepository;
         this.pcTypeRepository = pcTypeRepository;
-        this.modelMapper = modelMapper;
+        this.pcMapper = pcMapper;
     }
 
     public List<Pc> getAll() {
@@ -44,7 +44,7 @@ public class PcService {
         PcType type = getType(pcDto.configId());
 
         // map basic properties
-        Pc pc = modelMapper.map(pcDto, Pc.class);
+        Pc pc = pcMapper.toEntity(pcDto);
 
         // set FK entities
         pc.setRoom(room);
@@ -66,7 +66,7 @@ public class PcService {
             pc.setPcType(type);
         }
         // merge entities
-        modelMapper.map(updatePcDto, pc);
+        pcMapper.updateEntityFromDto(updatePcDto, pc);
 
         return pcRepository.save(pc);
     }

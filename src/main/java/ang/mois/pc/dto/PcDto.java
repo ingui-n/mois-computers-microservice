@@ -3,6 +3,7 @@ package ang.mois.pc.dto;
 
 import ang.mois.pc.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record PcDto(
@@ -11,7 +12,7 @@ public record PcDto(
         @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Name is mandatory")
         String name,
 
-        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Available is mandatory")
+        @NotNull(groups = ValidationGroups.OnCreate.class, message = "Available is mandatory")
         Boolean available,
 
         @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Computer Room Id is mandatory")
