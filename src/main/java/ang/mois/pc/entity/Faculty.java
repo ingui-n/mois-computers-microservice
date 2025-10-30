@@ -16,9 +16,9 @@ public class Faculty {
     private String shortcut;
     private Time reservationTimeStart;
     private Time reservationTimeEnd;
-    private int maxUserReservationCount; // of all time
-    private int maxUserReservationTime; // for 1 reservation in minutes
-    private int maxUserReservationTimeWeekly; // weekly in minutes
+    private Integer maxUserReservationCount; // of all time
+    private Integer maxUserReservationTime; // for 1 reservation in minutes
+    private Integer maxUserReservationTimeWeekly; // weekly in minutes
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -34,6 +34,17 @@ public class Faculty {
         this.maxUserReservationCount = 9999;
         this.maxUserReservationTime = 180;
         this.maxUserReservationTimeWeekly = 900;
+    }
+
+    public Faculty(LocalDateTime createdAt, int maxUserReservationTimeWeekly, int maxUserReservationTime, int maxUserReservationCount, Time reservationTimeEnd, Time reservationTimeStart, String shortcut, String name) {
+        this.createdAt = createdAt;
+        this.maxUserReservationTimeWeekly = maxUserReservationTimeWeekly;
+        this.maxUserReservationTime = maxUserReservationTime;
+        this.maxUserReservationCount = maxUserReservationCount;
+        this.reservationTimeEnd = reservationTimeEnd;
+        this.reservationTimeStart = reservationTimeStart;
+        this.shortcut = shortcut;
+        this.name = name;
     }
 
     public Faculty() {
@@ -83,27 +94,27 @@ public class Faculty {
         this.reservationTimeEnd = reservationTimeEnd;
     }
 
-    public int getMaxUserReservationCount() {
+    public Integer getMaxUserReservationCount() {
         return maxUserReservationCount;
     }
 
-    public void setMaxUserReservationCount(int maxUserReservationCount) {
+    public void setMaxUserReservationCount(Integer maxUserReservationCount) {
         this.maxUserReservationCount = maxUserReservationCount;
     }
 
-    public int getMaxUserReservationTime() {
+    public Integer getMaxUserReservationTime() {
         return maxUserReservationTime;
     }
 
-    public void setMaxUserReservationTime(int maxUserReservationTime) {
+    public void setMaxUserReservationTime(Integer maxUserReservationTime) {
         this.maxUserReservationTime = maxUserReservationTime;
     }
 
-    public int getMaxUserReservationTimeWeekly() {
+    public Integer getMaxUserReservationTimeWeekly() {
         return maxUserReservationTimeWeekly;
     }
 
-    public void setMaxUserReservationTimeWeekly(int maxUserReservationTimeWeekly) {
+    public void setMaxUserReservationTimeWeekly(Integer maxUserReservationTimeWeekly) {
         this.maxUserReservationTimeWeekly = maxUserReservationTimeWeekly;
     }
 
