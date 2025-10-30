@@ -3,7 +3,10 @@ package ang.mois.pc.controller;
 import ang.mois.pc.dto.FacultyDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.service.FacultyService;
+import ang.mois.pc.validation.ValidationGroups;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,12 +31,12 @@ public class FacultyController {
     }
 
     @PostMapping
-    public ResponseEntity<Faculty> addFaculty(@RequestBody FacultyDto facultyDto) {
-        return ResponseEntity.status(201).body(facultyService.save(facultyDto));
+    public ResponseEntity<Faculty> addFaculty(@Validated(ValidationGroups.OnCreate.class) @RequestBody FacultyDto facultyDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(facultyService.save(facultyDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @RequestBody FacultyDto facultyDto) {
+    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @Validated @RequestBody FacultyDto facultyDto) {
         return ResponseEntity.ok(facultyService.update(id, facultyDto));
     }
 
