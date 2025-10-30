@@ -1,7 +1,9 @@
 package ang.mois.pc.mapper;
 
 import ang.mois.pc.dto.FacultyDto;
+import ang.mois.pc.dto.PcDto;
 import ang.mois.pc.entity.Faculty;
+import ang.mois.pc.entity.Pc;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,21 +15,30 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-        // 1. Skip the ID and Rooms (optional but good practice)
+        // Ignore null properties in DTOs
         modelMapper.getConfiguration()
-                .setSkipNullEnabled(true); // Ignore null properties in DTOs
+                .setSkipNullEnabled(true);
 
-        // 2. Define custom mapping for fields that don't match or need special handling
-        // Since 'createdAt' is not in the DTO, we create a specific TypeMap to set it.
+        // Custom mapping for fields that don't match or need special handling
         modelMapper.createTypeMap(FacultyDto.class, Faculty.class)
                 .addMappings(mapper -> {
-                    // Ignore fields that are not in the DTO or are managed by JPA/DB
+                    // skip special DB/JPA properties
                     mapper.skip(Faculty::setId);
                     mapper.skip(Faculty::setRooms);
 
                     // Use a custom converter or expression to set 'createdAt'
                     // This is one way to handle the LocalDateTime.now() requirement
                     mapper.map(src -> java.time.LocalDateTime.now(), Faculty::setCreatedAt);
+                });
+
+        modelMapper.createTypeMap(PcDto.class, Pc.class)
+                .addMappings(mapper -> {
+                    // skip special DB properties
+                    mapper.skip(Pc::setId);
+                    // skip the FK entities as we need more flexible handling for them in code
+                    mapper.skip(Pc::setRoom);
+                    mapper.skip(Pc::setPcType);
+                    mapper.map(src -> java.time.LocalDateTime.now(), Pc::setCreatedAt);
                 });
 
         return modelMapper;
