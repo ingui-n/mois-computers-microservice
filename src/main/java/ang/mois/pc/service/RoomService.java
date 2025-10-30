@@ -1,6 +1,5 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.CreateRoomDto;
 import ang.mois.pc.dto.RoomDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
@@ -32,7 +31,7 @@ public class RoomService {
         return roomRepository.findByFaculty(faculty);
     }
 
-    public Room save(CreateRoomDto createRoomDto) {
+    public Room save(RoomDto createRoomDto) {
         Faculty faculty = facultyService.getById(createRoomDto.facultyId());
         Room room = new Room(createRoomDto.name(), faculty);
         return roomRepository.save(room);
