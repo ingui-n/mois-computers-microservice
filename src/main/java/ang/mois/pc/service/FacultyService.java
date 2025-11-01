@@ -2,8 +2,8 @@ package ang.mois.pc.service;
 
 import ang.mois.pc.dto.FacultyDto;
 import ang.mois.pc.entity.Faculty;
+import ang.mois.pc.mapper.FacultyMapper;
 import ang.mois.pc.repository.FacultyRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
 @Service
 public class FacultyService {
     private final FacultyRepository facultyRepository;
-    private final ModelMapper modelMapper;
+    private final FacultyMapper facultyMapper;
 
-    public FacultyService(FacultyRepository facultyRepository, ModelMapper modelMapper) {
+    public FacultyService(FacultyRepository facultyRepository, FacultyMapper facultyMapper) {
         this.facultyRepository = facultyRepository;
-        this.modelMapper = modelMapper;
+        this.facultyMapper = facultyMapper;
     }
 
     public Faculty getById(Long id) {
@@ -28,7 +28,7 @@ public class FacultyService {
     }
 
     public Faculty save(FacultyDto facultyDto) {
-        Faculty faculty = modelMapper.map(facultyDto, Faculty.class);
+        Faculty faculty = facultyMapper.toEntity(facultyDto);
         return facultyRepository.save(faculty);
     }
 
@@ -40,7 +40,7 @@ public class FacultyService {
     public Faculty update(Long id, FacultyDto facultyDto) {
         Faculty faculty = getById(id);
         // merge entities - basically copy non-null values to existing faculty
-        modelMapper.map(facultyDto, faculty);
+        facultyMapper.updateEntityFromDto(facultyDto, faculty);
 
         return facultyRepository.save(faculty);
     }

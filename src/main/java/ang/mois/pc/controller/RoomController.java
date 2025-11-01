@@ -1,14 +1,15 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.CreateRoomDto;
 import ang.mois.pc.dto.RoomDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.service.RoomService;
+import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,8 +44,8 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<Room> addRoom(@RequestBody CreateRoomDto createRoomDto) {
-        Room saved = roomService.save(createRoomDto);
+    public ResponseEntity<Room> addRoom(@Validated(ValidationGroups.OnCreate.class) @RequestBody RoomDto roomDto) {
+        Room saved = roomService.save(roomDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
@@ -55,7 +56,7 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody RoomDto roomDto) {
+    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @Validated @RequestBody RoomDto roomDto) {
         Room updated = roomService.update(id, roomDto);
         return ResponseEntity.ok(updated);
     }

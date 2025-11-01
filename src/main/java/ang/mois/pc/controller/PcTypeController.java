@@ -3,9 +3,11 @@ package ang.mois.pc.controller;
 import ang.mois.pc.dto.PcTypeDto;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.service.PcTypeService;
+import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class PcTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<PcType> addType(@RequestBody PcTypeDto type) {
+    public ResponseEntity<PcType> addType(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcTypeDto type) {
         PcType saved = pcTypeService.save(type);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -43,7 +45,7 @@ public class PcTypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PcType> updatePcType(@PathVariable Long id, @RequestBody PcTypeDto pcType) {
+    public ResponseEntity<PcType> updatePcType(@PathVariable Long id, @Validated @RequestBody PcTypeDto pcType) {
         PcType updated = pcTypeService.update(id, pcType);
         return ResponseEntity.ok(updated);
     }

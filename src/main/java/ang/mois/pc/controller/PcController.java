@@ -1,13 +1,14 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.CreatePcDto;
-import ang.mois.pc.dto.UpdatePcDto;
+import ang.mois.pc.dto.PcDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
 import ang.mois.pc.service.RoomService;
+import ang.mois.pc.validation.ValidationGroups;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,14 +47,14 @@ public class PcController {
     }
 
     @PostMapping
-    public ResponseEntity<Pc> addPc(@RequestBody CreatePcDto createPcDto) {
-        Pc saved = pcService.save(createPcDto);
+    public ResponseEntity<Pc> addPc(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcDto pcDto) {
+        Pc saved = pcService.save(pcDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pc> updatePc(@PathVariable Long id, @RequestBody UpdatePcDto updatePcDto) {
-        Pc updated = pcService.update(id, updatePcDto);
+    public ResponseEntity<Pc> updatePc(@PathVariable Long id, @Validated @RequestBody PcDto pcDto) {
+        Pc updated = pcService.update(id, pcDto);
         return ResponseEntity.ok(updated);
     }
 
