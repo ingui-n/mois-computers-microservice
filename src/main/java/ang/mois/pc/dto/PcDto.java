@@ -15,10 +15,10 @@ public record PcDto(
         @NotNull(groups = ValidationGroups.OnCreate.class, message = "Available is mandatory")
         Boolean available,
 
-        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Computer Room Id is mandatory")
+        @NotNull(groups = ValidationGroups.OnCreate.class, message = "Computer Room Id is mandatory")
         Long computerRoomId,
 
-        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Computer Config Id is mandatory")
+        @NotNull(groups = ValidationGroups.OnCreate.class, message = "Computer Config Id is mandatory")
         Long configId
 ) {
 }
