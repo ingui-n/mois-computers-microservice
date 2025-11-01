@@ -14,12 +14,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Time;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -184,6 +184,39 @@ class FacultyControllerTest {
                 .andExpect(jsonPath("$.maxUserReservationCount").value("Reservation count must be zero or positive"));
 
         verify(facultyService, never()).update(anyLong(), any(FacultyDto.class));
+    }
+    /* --- GET /faculty tests --- */
+
+    @Test
+    void getAllFaculties() throws Exception {
+        when(facultyService.getAll()).thenReturn(List.of(facultyEntity));
+
+        mockMvc.perform(get(apiPath))
+                .andExpect(status().isOk());
+
+        verify(facultyService, times(1)).getAll();
+    }
+
+    @Test
+    void getFacultyById() throws Exception {
+        when(facultyService.getById(1L)).thenReturn(facultyEntity);
+
+        mockMvc.perform(get(apiPath.concat("/1")))
+                .andExpect(status().isOk());
+
+        verify(facultyService, times(1)).getById(1L);
+    }
+
+    /* --- DELETE /faculty/{id} tests --- */
+
+    @Test
+    void deleteFaculty() throws Exception {
+        doNothing().when(facultyService).delete(1L);
+
+        mockMvc.perform(delete(apiPath.concat("/1")))
+                .andExpect(status().isNoContent());
+
+        verify(facultyService, times(1)).delete(1L);
     }
 }
 
