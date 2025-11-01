@@ -10,13 +10,13 @@ public record PcTypeDto(
         @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Name is mandatory")
         String name,
 
-        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Name is mandatory")
+        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Cpu is mandatory")
         String cpu,
 
-        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Name is mandatory")
+        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Ram is mandatory")
         String ram,
 
-        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Name is mandatory")
+        @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Gpu is mandatory")
         String gpu
 ){
 }
