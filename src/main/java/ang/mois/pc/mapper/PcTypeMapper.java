@@ -3,8 +3,7 @@ package ang.mois.pc.mapper;
 import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.dto.response.PcTypeResponseDto;
 import ang.mois.pc.entity.PcType;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.List;
 

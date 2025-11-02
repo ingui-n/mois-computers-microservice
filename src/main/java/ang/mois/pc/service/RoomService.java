@@ -52,7 +52,10 @@ public class RoomService {
 
     public RoomResponseDto update(Long idR, RoomRequestDto roomRequestDto) {
         Room room = getRoom(idR);
-        if (roomRequestDto.name() != null) room.setName(roomRequestDto.name());
+
+        // map by copying non null values from the update dto
+        roomMapper.updateEntityFromDto(roomRequestDto, room);
+
         return roomMapper.toResponseDto(roomRepository.save(room));
     }
 

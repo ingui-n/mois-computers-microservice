@@ -36,16 +36,12 @@ public class PcService {
     }
 
     public PcResponseDto getById(Long id) {
-        Pc pc = pcRepository.findById(id)
-                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
-
+        Pc pc = getPc(id);
         return pcMapper.toResponseDto(pc);
     }
 
     public PcUnwrappedResponseDto getByIdUnwrapped(Long id) {
-        Pc pc = pcRepository.findById(id)
-                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
-
+        Pc pc = getPc(id);
         return pcMapper.toUnwrappedResponseDto(pc);
     }
 
@@ -65,8 +61,7 @@ public class PcService {
     }
 
     public PcResponseDto update(Long id, PcRequestDto updatePcRequestDto) {
-        Pc pc = pcRepository.findById(id)
-                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
+        Pc pc = getPc(id);
         // verify foreign key relations
         if(updatePcRequestDto.computerRoomId() != null) {
             Room room = getRoom(updatePcRequestDto.computerRoomId());
@@ -112,5 +107,10 @@ public class PcService {
 
     public List<PcResponseDto> getByType(PcType type) {
         return pcMapper.toResponseDtoList(pcRepository.findByPcType(type));
+    }
+
+    private Pc getPc(Long id) {
+        return pcRepository.findById(id)
+                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
     }
 }

@@ -22,9 +22,9 @@ public class PcTypeService {
     public List<PcTypeResponseDto> getAll() {
         return pcTypeMapper.toResponseDtoList(pcTypeRepository.findAll());
     }
+
     public PcTypeResponseDto getById(Long typeId) {
-        PcType type = pcTypeRepository.findById(typeId)
-                .orElseThrow(() -> new IllegalArgumentException("PcType with id " + typeId + " does not exist"));
+        PcType type = getPcType(typeId);
         return pcTypeMapper.toResponseDto(type);
     }
 
@@ -37,14 +37,17 @@ public class PcTypeService {
         pcTypeRepository.deleteById(typeId);
     }
 
-    public PcTypeResponseDto update(Long id, PcTypeRequestDto pcType) {
-        PcType type = pcTypeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("PcType with id " + id + " does not exist"));
-        if (pcType.name() != null) type.setName(pcType.name());
-        if (pcType.cpu() != null) type.setCpu(pcType.cpu());
-        if (pcType.ram() != null) type.setRam(pcType.ram());
-        if (pcType.gpu() != null) type.setGpu(pcType.gpu());
+    public PcTypeResponseDto update(Long id, PcTypeRequestDto pcTypeDto) {
+        PcType pcTypeEntity = getPcType(id);
 
-        return pcTypeMapper.toResponseDto(pcTypeRepository.save(type));
+        // map by copying non-null values from update dto
+        pcTypeMapper.updateEntityFromDto(pcTypeDto, pcTypeEntity);
+
+        return pcTypeMapper.toResponseDto(pcTypeRepository.save(pcTypeEntity));
+    }
+
+    private PcType getPcType(Long id) {
+        return pcTypeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("PcType with id " + id + " does not exist"));
     }
 }

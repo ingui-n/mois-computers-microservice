@@ -20,8 +20,7 @@ public class FacultyService {
     }
 
     public FacultyResponseDto getById(Long id) {
-       Faculty faculty = facultyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
+       Faculty faculty = getFaculty(id);
        return facultyMapper.toResponseDto(faculty);
     }
 
@@ -40,11 +39,16 @@ public class FacultyService {
     }
 
     public FacultyResponseDto update(Long id, FacultyRequestDto facultyRequestDto) {
-        Faculty faculty = facultyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
+        Faculty faculty = getFaculty(id);
+
         // merge entities - basically copy non-null values to existing faculty
         facultyMapper.updateEntityFromDto(facultyRequestDto, faculty);
 
         return facultyMapper.toResponseDto(facultyRepository.save(faculty));
+    }
+
+    private Faculty getFaculty(Long id) {
+        return facultyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
     }
 }
