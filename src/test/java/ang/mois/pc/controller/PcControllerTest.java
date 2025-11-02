@@ -2,6 +2,7 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.PcRequestDto;
+import ang.mois.pc.dto.response.PcResponseDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +42,7 @@ public class PcControllerTest {
 
     private PcRequestDto validDto;
     private Pc pcEntity;
+    private PcResponseDto pcResponseDto;
     private Room roomEntity;
     private final String apiPath = "/computer";
 
@@ -52,6 +55,14 @@ public class PcControllerTest {
                 1L
         );
         pcEntity = new Pc();
+        pcResponseDto = new PcResponseDto(
+                1L,
+                "Gaming Pc - Best one",
+                Boolean.TRUE,
+                1L,
+                1L,
+                LocalDateTime.now()
+        );
         roomEntity = new Room();
     }
 
@@ -162,7 +173,7 @@ public class PcControllerTest {
     /* GET /computer tests */
     @Test
     void getAllPcs() throws Exception {
-        when(pcService.getAll()).thenReturn(List.of(pcEntity));
+        when(pcService.getAll()).thenReturn(List.of(pcResponseDto));
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());

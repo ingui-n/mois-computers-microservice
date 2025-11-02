@@ -1,6 +1,7 @@
 package ang.mois.pc.service;
 
 import ang.mois.pc.dto.request.PcRequestDto;
+import ang.mois.pc.dto.response.PcResponseDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
@@ -29,16 +30,18 @@ public class PcService {
         this.pcMapper = pcMapper;
     }
 
-    public List<Pc> getAll() {
-        return pcRepository.findAll();
+    public List<PcResponseDto> getAll() {
+        return pcMapper.toResponseDtoList(pcRepository.findAll());
     }
 
-    public Pc getById(Long id) {
-        return pcRepository.findById(id)
+    public PcResponseDto getById(Long id) {
+        Pc pc = pcRepository.findById(id)
                 .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
+
+        return pcMapper.toResponseDto(pc);
     }
 
-    public Pc save(PcRequestDto pcRequestDto) {
+    public PcResponseDto save(PcRequestDto pcRequestDto) {
         // retrieve foreign key entities and verify relation
         Room room = getRoom(pcRequestDto.computerRoomId());
         PcType type = getType(pcRequestDto.configId());
@@ -50,11 +53,12 @@ public class PcService {
         pc.setRoom(room);
         pc.setPcType(type);
 
-        return pcRepository.save(pc);
+        return pcMapper.toResponseDto(pcRepository.save(pc));
     }
 
-    public Pc update(Long id, PcRequestDto updatePcRequestDto) {
-        Pc pc = getById(id);
+    public PcResponseDto update(Long id, PcRequestDto updatePcRequestDto) {
+        Pc pc = pcRepository.findById(id)
+                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
         // verify foreign key relations
         if(updatePcRequestDto.computerRoomId() != null) {
             Room room = getRoom(updatePcRequestDto.computerRoomId());
@@ -68,7 +72,7 @@ public class PcService {
         // merge entities
         pcMapper.updateEntityFromDto(updatePcRequestDto, pc);
 
-        return pcRepository.save(pc);
+        return pcMapper.toResponseDto(pcRepository.save(pc));
     }
 
     private Room getRoom(Long roomId) {
@@ -91,11 +95,11 @@ public class PcService {
         pcRepository.deleteById(id);
     }
 
-    public List<Pc> getByRoom(Room room) {
-        return pcRepository.findByRoom(room);
+    public List<PcResponseDto> getByRoom(Room room) {
+        return pcMapper.toResponseDtoList(pcRepository.findByRoom(room));
     }
 
-    public List<Pc> getByType(PcType type) {
-        return pcRepository.findByPcType(type);
+    public List<PcResponseDto> getByType(PcType type) {
+        return pcMapper.toResponseDtoList(pcRepository.findByPcType(type));
     }
 }
