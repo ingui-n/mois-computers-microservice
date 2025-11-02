@@ -1,8 +1,9 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
-import ang.mois.pc.dto.FacultyDto;
-import ang.mois.pc.entity.Faculty;
+import ang.mois.pc.dto.request.FacultyRequestDto;
+import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.service.FacultyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,46 +42,37 @@ class FacultyControllerTest {
     @MockitoBean
     private FacultyService facultyService;
 
-    private FacultyDto validDto;
-    private Faculty facultyEntity;
+    private FacultyRequestDto validDto;
+    private FacultyResponseDto responseDto;
 
     private final String apiPath = "/faculty";
 
     @BeforeEach
     void setUp() {
         // A helper to create a fully valid DTO for OnCreate
-        validDto = new FacultyDto(
-                "Faculty of Informatics",
-                "FI",
-                Time.valueOf("08:00:00"),
-                Time.valueOf("20:00:00"),
-                5,
-                90,
-                180
-        );
+        validDto = TestDataProvider.getFacultyRequestDto();
 
         // A mock entity to be returned by the service
-        facultyEntity = new Faculty();
+        responseDto = TestDataProvider.getFacultyResponseDto();
     }
 
-    /* POST /faculty tests */
-
+    // POST /faculty tests
     @Test
     void addValidFaculty() throws Exception {
-        when(facultyService.save(any(FacultyDto.class))).thenReturn(facultyEntity);
+        when(facultyService.save(any(FacultyRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isCreated());
 
-        verify(facultyService, times(1)).save(any(FacultyDto.class));
+        verify(facultyService, times(1)).save(any(FacultyRequestDto.class));
     }
 
     @Test
     void addInvalidFaculty_BlankName() throws Exception {
         // Create a DTO that violates an OnCreate rule
-        FacultyDto invalidDto = new FacultyDto(
+        FacultyRequestDto invalidDto = new FacultyRequestDto(
                 "", // Blank name
                 "FI",
                 Time.valueOf("08:00:00"),
@@ -95,13 +87,13 @@ class FacultyControllerTest {
                 .andExpect(jsonPath("$.name").value("Name is mandatory"));
 
         // Verify service was never called
-        verify(facultyService, never()).save(any(FacultyDto.class));
+        verify(facultyService, never()).save(any(FacultyRequestDto.class));
     }
 
     @Test
     void addInvalidFaculty_TimeIsNull() throws Exception {
         // Create a DTO that violates an OnCreate rule
-        FacultyDto invalidDto = new FacultyDto(
+        FacultyRequestDto invalidDto = new FacultyRequestDto(
                 "Faculty of Informatics",
                 "FI",
                 null, // Null start time
@@ -115,15 +107,14 @@ class FacultyControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.reservationTimeStart").value("Reservation start time is mandatory"));
 
-        verify(facultyService, never()).save(any(FacultyDto.class));
+        verify(facultyService, never()).save(any(FacultyRequestDto.class));
     }
 
-    // --- PUT /faculty/{id} (Default Validation) Test
-
+    //  PUT /faculty/{id} (Default Validation) Test
     @Test
     void updateFaculty() throws Exception {
         // This DTO would FAIL OnCreate validation but should PASS Default validation
-        FacultyDto partialDto = new FacultyDto(
+        FacultyRequestDto partialDto = new FacultyRequestDto(
                 "Updated Faculty Name",
                 null, // This is allowed on update
                 null, // This is allowed on update
@@ -133,19 +124,19 @@ class FacultyControllerTest {
                 null
         );
 
-        when(facultyService.update(eq(1L), any(FacultyDto.class))).thenReturn(facultyEntity);
+        when(facultyService.update(eq(1L), any(FacultyRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(put(apiPath.concat("/1"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(partialDto)))
                 .andExpect(status().isOk());
 
-        verify(facultyService, times(1)).update(eq(1L), any(FacultyDto.class));
+        verify(facultyService, times(1)).update(eq(1L), any(FacultyRequestDto.class));
     }
 
     @Test
     void updateFacultyInvalid_NameIsTooShort() throws Exception {
-        FacultyDto invalidPartialDto = new FacultyDto(
+        FacultyRequestDto invalidPartialDto = new FacultyRequestDto(
                 "A", // Too short
                 null,
                 null,
@@ -161,13 +152,13 @@ class FacultyControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name must be between 2 and 100 characters"));
 
-        verify(facultyService, never()).update(anyLong(), any(FacultyDto.class));
+        verify(facultyService, never()).update(anyLong(), any(FacultyRequestDto.class));
     }
 
     @Test
     void updateFacultyInvalid_ReservationCountIsNegative() throws Exception {
         // This DTO violates a Default rule (@Min(value=0))
-        FacultyDto invalidPartialDto = new FacultyDto(
+        FacultyRequestDto invalidPartialDto = new FacultyRequestDto(
                 "A valid name",
                 null,
                 null,
@@ -183,13 +174,13 @@ class FacultyControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.maxUserReservationCount").value("Reservation count must be zero or positive"));
 
-        verify(facultyService, never()).update(anyLong(), any(FacultyDto.class));
+        verify(facultyService, never()).update(anyLong(), any(FacultyRequestDto.class));
     }
-    /* --- GET /faculty tests --- */
 
+    // GET /faculty tests
     @Test
     void getAllFaculties() throws Exception {
-        when(facultyService.getAll()).thenReturn(List.of(facultyEntity));
+        when(facultyService.getAll()).thenReturn(List.of(responseDto));
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
@@ -199,7 +190,7 @@ class FacultyControllerTest {
 
     @Test
     void getFacultyById() throws Exception {
-        when(facultyService.getById(1L)).thenReturn(facultyEntity);
+        when(facultyService.getById(1L)).thenReturn(responseDto);
 
         mockMvc.perform(get(apiPath.concat("/1")))
                 .andExpect(status().isOk());
@@ -207,8 +198,7 @@ class FacultyControllerTest {
         verify(facultyService, times(1)).getById(1L);
     }
 
-    /* --- DELETE /faculty/{id} tests --- */
-
+    // DELETE /faculty/{id} tests
     @Test
     void deleteFaculty() throws Exception {
         doNothing().when(facultyService).delete(1L);

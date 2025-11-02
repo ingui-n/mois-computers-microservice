@@ -1,5 +1,7 @@
 package ang.mois.pc.mapper;
-import ang.mois.pc.dto.PcDto;
+import ang.mois.pc.dto.request.PcRequestDto;
+import ang.mois.pc.dto.response.PcResponseDto;
+import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
 import ang.mois.pc.entity.Pc;
 import org.mapstruct.*;
 import java.util.List;
@@ -7,17 +9,27 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PcMapper {
 
-    // --- to Entity: copy all fields ---
+    // Request: to entity - copy all fields
     @Mapping(target = "id", ignore = true) // don’t copy from DTO
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())") // set automatically
-    Pc toEntity(PcDto dto);
+    Pc toEntity(PcRequestDto dto);
 
-    // --- to Dto ---
-    PcDto toDto(Pc entity);
-
-    List<PcDto> toDtoList(List<Pc> entities);
-
-    // --- Update: merge non-null fields ---
+    // Update: merge non-null fields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromDto(PcDto dto, @MappingTarget Pc entity);
+    void updateEntityFromDto(PcRequestDto dto, @MappingTarget Pc entity);
+
+    // Response: Entity - Response DTO with flattened FK
+    @Mapping(target = "computerRoomId", source = "room.id")
+    @Mapping(target = "configId", source = "pcType.id")
+    PcResponseDto toResponseDto(Pc entity);
+
+    List<PcResponseDto> toResponseDtoList(List<Pc> entities);
+
+    // Response: Entity - Response Unwrapped Dto
+    @Mapping(target = "computerRoom", source = "room")
+    @Mapping(target = "computerRoom.facultyId", source = "room.faculty.id")
+    @Mapping(target = "computerConfig", source = "pcType")
+    PcUnwrappedResponseDto toUnwrappedResponseDto(Pc entity);
+
+    List<PcUnwrappedResponseDto> toUnwrappedResponseDtoList(List<Pc> entities);
 }

@@ -1,5 +1,6 @@
 package ang.mois.pc.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.sql.Time;
@@ -22,6 +23,7 @@ public class Faculty {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Room> rooms;
 
     public Faculty(String name, String shortcut) {

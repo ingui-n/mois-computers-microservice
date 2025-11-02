@@ -1,9 +1,10 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
-import ang.mois.pc.dto.RoomDto;
-import ang.mois.pc.entity.Faculty;
-import ang.mois.pc.entity.Room;
+import ang.mois.pc.dto.request.RoomRequestDto;
+import ang.mois.pc.dto.response.FacultyResponseDto;
+import ang.mois.pc.dto.response.RoomResponseDto;
 import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.service.RoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,38 +39,34 @@ public class RoomControllerTest {
     @MockitoBean
     private FacultyService facultyService;
 
-    private RoomDto validDto;
-    private Room roomEntity;
-    private Faculty faculty;
+    private RoomRequestDto roomRequestDto;
+    private RoomResponseDto roomResponseDto;
+    private FacultyResponseDto facultyResponseDto;
     private final String apiPath = "/computerRoom";
 
     @BeforeEach
     void setUp() {
-        validDto = new RoomDto(
-                "Main Lab",
-                1L
-        );
-
-        roomEntity = new Room();
-        faculty = new Faculty();
+        roomRequestDto = TestDataProvider.getRoomRequestDto();
+        roomResponseDto = TestDataProvider.getRoomResponseDto();
+        facultyResponseDto = TestDataProvider.getFacultyResponseDto();
     }
 
     /* POST /computerRoom tests */
     @Test
     void addValid() throws Exception {
-        when(roomService.save(any(RoomDto.class))).thenReturn(roomEntity);
+        when(roomService.save(any(RoomRequestDto.class))).thenReturn(roomResponseDto);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validDto)))
+                        .content(objectMapper.writeValueAsString(roomRequestDto)))
                 .andExpect(status().isCreated());
 
-        verify(roomService, times(1)).save(any(RoomDto.class));
+        verify(roomService, times(1)).save(any(RoomRequestDto.class));
     }
 
     @Test
     void addInvalid_BlankName() throws Exception {
-        RoomDto invalidDto = new RoomDto(
+        RoomRequestDto invalidDto = new RoomRequestDto(
                 "", // blank name
                 1L
         );
@@ -80,12 +77,12 @@ public class RoomControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name is mandatory"));
 
-        verify(roomService, never()).save(any(RoomDto.class));
+        verify(roomService, never()).save(any(RoomRequestDto.class));
     }
 
     @Test
     void addInvalid_NullFacultyId() throws Exception {
-        RoomDto invalidDto = new RoomDto(
+        RoomRequestDto invalidDto = new RoomRequestDto(
                 "Main Lab",
                 null // missing facultyId
         );
@@ -96,14 +93,14 @@ public class RoomControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.facultyId").value("Faculty Id is mandatory"));
 
-        verify(roomService, never()).save(any(RoomDto.class));
+        verify(roomService, never()).save(any(RoomRequestDto.class));
     }
 
     /* PUT /computerRoom/{id} tests */
     @Test
     void updateValid() throws Exception {
-        when(roomService.update(eq(1L), any(RoomDto.class))).thenReturn(roomEntity);
-        RoomDto partialDto = new RoomDto(
+        when(roomService.update(eq(1L), any(RoomRequestDto.class))).thenReturn(roomResponseDto);
+        RoomRequestDto partialDto = new RoomRequestDto(
                 "Updated Lab",
                 null // allowed null on update
         );
@@ -113,12 +110,12 @@ public class RoomControllerTest {
                         .content(objectMapper.writeValueAsString(partialDto)))
                 .andExpect(status().isOk());
 
-        verify(roomService, times(1)).update(eq(1L), any(RoomDto.class));
+        verify(roomService, times(1)).update(eq(1L), any(RoomRequestDto.class));
     }
 
     @Test
     void updateInvalid_NameTooShort() throws Exception {
-        RoomDto invalidPartialDto = new RoomDto(
+        RoomRequestDto invalidPartialDto = new RoomRequestDto(
                 "-", // too short
                 null
         );
@@ -129,13 +126,13 @@ public class RoomControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name must be between 2 and 100 characters"));
 
-        verify(roomService, never()).update(eq(1L), any(RoomDto.class));
+        verify(roomService, never()).update(eq(1L), any(RoomRequestDto.class));
     }
 
     /* GET /computerRoom and /computerRoom?facultyId= tests */
     @Test
     void getAllRooms() throws Exception {
-        when(roomService.getAll()).thenReturn(List.of(roomEntity));
+        when(roomService.getAll()).thenReturn(List.of(roomResponseDto));
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
@@ -145,14 +142,12 @@ public class RoomControllerTest {
 
     @Test
     void getRoomsByFaculty() throws Exception {
-        when(facultyService.getById(1L)).thenReturn(faculty);
-        when(roomService.getByFaculty(faculty)).thenReturn(List.of(roomEntity));
+        when(roomService.getByFaculty(facultyResponseDto.id())).thenReturn(List.of(roomResponseDto));
 
         mockMvc.perform(get(apiPath).param("facultyId", "1"))
                 .andExpect(status().isOk());
 
-        verify(facultyService, times(1)).getById(1L);
-        verify(roomService, times(1)).getByFaculty(faculty);
+        verify(roomService, times(1)).getByFaculty(facultyResponseDto.id());
     }
 
     /* DELETE /computerRoom/{id} */

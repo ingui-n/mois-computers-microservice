@@ -1,6 +1,7 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.FacultyDto;
+import ang.mois.pc.dto.request.FacultyRequestDto;
+import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.mapper.FacultyMapper;
 import ang.mois.pc.repository.FacultyRepository;
@@ -18,18 +19,18 @@ public class FacultyService {
         this.facultyMapper = facultyMapper;
     }
 
-    public Faculty getById(Long id) {
-        return facultyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
+    public FacultyResponseDto getById(Long id) {
+       Faculty faculty = getFaculty(id);
+       return facultyMapper.toResponseDto(faculty);
     }
 
-    public List<Faculty> getAll() {
-        return facultyRepository.findAll();
+    public List<FacultyResponseDto> getAll() {
+        return facultyMapper.toResponseDtoList(facultyRepository.findAll());
     }
 
-    public Faculty save(FacultyDto facultyDto) {
-        Faculty faculty = facultyMapper.toEntity(facultyDto);
-        return facultyRepository.save(faculty);
+    public FacultyResponseDto save(FacultyRequestDto facultyRequestDto) {
+        Faculty faculty = facultyMapper.toEntity(facultyRequestDto);
+        return facultyMapper.toResponseDto(facultyRepository.save(faculty));
     }
 
     public void delete(Long id) {
@@ -37,11 +38,17 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-    public Faculty update(Long id, FacultyDto facultyDto) {
-        Faculty faculty = getById(id);
-        // merge entities - basically copy non-null values to existing faculty
-        facultyMapper.updateEntityFromDto(facultyDto, faculty);
+    public FacultyResponseDto update(Long id, FacultyRequestDto facultyRequestDto) {
+        Faculty faculty = getFaculty(id);
 
-        return facultyRepository.save(faculty);
+        // merge entities - basically copy non-null values to existing faculty
+        facultyMapper.updateEntityFromDto(facultyRequestDto, faculty);
+
+        return facultyMapper.toResponseDto(facultyRepository.save(faculty));
+    }
+
+    private Faculty getFaculty(Long id) {
+        return facultyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
     }
 }

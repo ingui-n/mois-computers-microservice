@@ -1,9 +1,10 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
-import ang.mois.pc.dto.PcDto;
-import ang.mois.pc.entity.Pc;
-import ang.mois.pc.entity.Room;
+import ang.mois.pc.dto.request.PcRequestDto;
+import ang.mois.pc.dto.response.PcResponseDto;
+import ang.mois.pc.dto.response.RoomResponseDto;
 import ang.mois.pc.service.PcService;
 import ang.mois.pc.service.RoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,39 +39,34 @@ public class PcControllerTest {
     @MockitoBean
     private RoomService roomService;
 
-    private PcDto validDto;
-    private Pc pcEntity;
-    private Room roomEntity;
+    private PcRequestDto validDto;
+    private PcResponseDto pcResponseDto;
+    private RoomResponseDto roomResponseDto;
     private final String apiPath = "/computer";
 
     @BeforeEach
     void setUp() {
-        validDto = new PcDto(
-                "Gaming Pc - Best one",
-                Boolean.TRUE,
-                1L,
-                1L
-        );
-        pcEntity = new Pc();
-        roomEntity = new Room();
+        validDto = TestDataProvider.getPcRequestDto();
+        pcResponseDto = TestDataProvider.getPcResponseDto();
+        roomResponseDto = TestDataProvider.getRoomResponseDto();
     }
 
     /* POST /computer tests */
     @Test
     void addValid() throws Exception {
-        when(pcService.save(any(PcDto.class))).thenReturn(pcEntity);
+        when(pcService.save(any(PcRequestDto.class))).thenReturn(pcResponseDto);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isCreated());
 
-        verify(pcService, times(1)).save(any(PcDto.class));
+        verify(pcService, times(1)).save(any(PcRequestDto.class));
     }
 
     @Test
     void addInvalidPc_BlankName() throws Exception {
-        PcDto invalidDto = new PcDto(
+        PcRequestDto invalidDto = new PcRequestDto(
                 "", // blank name
                 Boolean.TRUE,
                 1L,
@@ -83,12 +79,12 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name is mandatory"));
 
-        verify(pcService, never()).save(any(PcDto.class));
+        verify(pcService, never()).save(any(PcRequestDto.class));
     }
 
     @Test
     void addInvalidPc_NullAvailability() throws Exception {
-        PcDto invalidDto = new PcDto(
+        PcRequestDto invalidDto = new PcRequestDto(
                 "Some Pc",
                 null, // null availability
                 1L,
@@ -101,12 +97,12 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.available").value("Available is mandatory"));
 
-        verify(pcService, never()).save(any(PcDto.class));
+        verify(pcService, never()).save(any(PcRequestDto.class));
     }
 
     @Test
     void addInvalidPc_NullRoomId() throws Exception {
-        PcDto invalidDto = new PcDto(
+        PcRequestDto invalidDto = new PcRequestDto(
                 "Pc Name",
                 Boolean.TRUE,
                 null, // null room id
@@ -119,14 +115,14 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.computerRoomId").value("Computer Room Id is mandatory"));
 
-        verify(pcService, never()).save(any(PcDto.class));
+        verify(pcService, never()).save(any(PcRequestDto.class));
     }
 
     /* PUT /computer/{id} tests */
     @Test
     void updateValid() throws Exception {
-        when(pcService.update(eq(1L), any(PcDto.class))).thenReturn(pcEntity);
-        PcDto partialDto = new PcDto(
+        when(pcService.update(eq(1L), any(PcRequestDto.class))).thenReturn(pcResponseDto);
+        PcRequestDto partialDto = new PcRequestDto(
                 "Updated Pc Name",
                 Boolean.FALSE,
                 null,
@@ -138,12 +134,12 @@ public class PcControllerTest {
                         .content(objectMapper.writeValueAsString(partialDto)))
                 .andExpect(status().isOk());
 
-        verify(pcService, times(1)).update(eq(1L), any(PcDto.class));
+        verify(pcService, times(1)).update(eq(1L), any(PcRequestDto.class));
     }
 
     @Test
     void updateInvalid_NameTooShort() throws Exception {
-        PcDto invalidPartialDto = new PcDto(
+        PcRequestDto invalidPartialDto = new PcRequestDto(
                 "-", // too short name
                 Boolean.FALSE,
                 null,
@@ -156,13 +152,13 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name must be between 2 and 100 characters"));
 
-        verify(pcService, never()).update(eq(1L), any(PcDto.class));
+        verify(pcService, never()).update(eq(1L), any(PcRequestDto.class));
     }
 
     /* GET /computer tests */
     @Test
     void getAllPcs() throws Exception {
-        when(pcService.getAll()).thenReturn(List.of(pcEntity));
+        when(pcService.getAll()).thenReturn(List.of(pcResponseDto));
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
@@ -173,20 +169,18 @@ public class PcControllerTest {
     /* GET /computer?computerRoomId= tests */
     @Test
     void getPcsByRoom() throws Exception {
-        when(roomService.getById(1L)).thenReturn(roomEntity);
-        when(pcService.getByRoom(roomEntity)).thenReturn(List.of(pcEntity));
+        when(pcService.getByRoom(roomResponseDto.id())).thenReturn(List.of(pcResponseDto));
 
         mockMvc.perform(get(apiPath).param("computerRoomId", "1"))
                 .andExpect(status().isOk());
 
-        verify(roomService, times(1)).getById(1L);
-        verify(pcService, times(1)).getByRoom(roomEntity);
+        verify(pcService, times(1)).getByRoom(roomResponseDto.id());
     }
 
     /* GET /computer/{id} tests */
     @Test
     void getPcById() throws Exception {
-        when(pcService.getById(1L)).thenReturn(pcEntity);
+        when(pcService.getById(1L)).thenReturn(pcResponseDto);
 
         mockMvc.perform(get(apiPath.concat("/1")))
                 .andExpect(status().isOk());
@@ -197,14 +191,12 @@ public class PcControllerTest {
     /* GET /computer/{id}?unwrap=true tests */
     @Test
     void getPcByIdUnwrap() throws Exception {
-        when(pcService.getById(1L)).thenReturn(pcEntity);
+        when(pcService.getById(1L)).thenReturn(pcResponseDto);
 
         mockMvc.perform(get(apiPath.concat("/1")).param("unwrap", "true"))
                 .andExpect(status().isOk());
 
-        // todo test the output later
-
-        verify(pcService, times(1)).getById(1L);
+        verify(pcService, times(1)).getByIdUnwrapped(1L);
     }
 
     /* DELETE /computer/{id} tests */

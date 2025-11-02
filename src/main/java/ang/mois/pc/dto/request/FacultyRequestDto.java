@@ -1,4 +1,4 @@
-package ang.mois.pc.dto;
+package ang.mois.pc.dto.request;
 
 import ang.mois.pc.validation.ValidationGroups;
 import jakarta.validation.constraints.Min;
@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.sql.Time;
 
-public record FacultyDto(
+public record FacultyRequestDto(
 
         // Always validate: if 'name' is present, it must not be blank and have 2-100 chars.
         @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")

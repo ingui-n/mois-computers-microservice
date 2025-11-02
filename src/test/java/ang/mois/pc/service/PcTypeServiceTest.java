@@ -1,63 +1,61 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.PcTypeDto;
-import ang.mois.pc.entity.PcType;
+import ang.mois.pc.util.TestDataProvider;
+import ang.mois.pc.dto.request.PcTypeRequestDto;
+import ang.mois.pc.dto.response.PcTypeResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class PcTypeServiceTest {
 
     @Autowired
     private PcTypeService pcTypeService;
 
-    private PcTypeDto validDto;
+    private PcTypeRequestDto pcTypeRequestDto;
 
     @BeforeEach
     void setUp() {
-        validDto = new PcTypeDto(
-                "Gaming PC",
-                "Intel i7",
-                "16GB",
-                "RTX 4070"
-        );
+        pcTypeRequestDto = TestDataProvider.getPcTypeRequestDto();
     }
 
     @Test
     void save() {
-        PcType type = pcTypeService.save(validDto);
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
         assertNotNull(type);
-        verifyParams(type, validDto);
+        verifyParams(type, pcTypeRequestDto);
     }
 
     @Test
     void getById() {
-        PcType type = pcTypeService.save(validDto);
-        PcType fetched = pcTypeService.getById(type.getId());
-        verifyParams(fetched, validDto);
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
+        PcTypeResponseDto fetched = pcTypeService.getById(type.id());
+        verifyParams(fetched, pcTypeRequestDto);
     }
 
     @Test
     void update() {
-        PcType type = pcTypeService.save(validDto);
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
 
-        PcTypeDto updateDto = new PcTypeDto(
+        PcTypeRequestDto updateDto = new PcTypeRequestDto(
                 "Office PC",
                 null,
                 "8GB",
                 null
         );
 
-        PcType updated = pcTypeService.update(type.getId(), updateDto);
-        PcTypeDto merged = new PcTypeDto(
-                "Office PC",
-                "Intel i7",
-                "8GB",
-                "RTX 4070"
+        PcTypeResponseDto updated = pcTypeService.update(type.id(), updateDto);
+        PcTypeRequestDto merged = new PcTypeRequestDto(
+                updateDto.name(),
+                pcTypeRequestDto.cpu(),
+                updated.ram(),
+                pcTypeRequestDto.gpu()
         );
 
         verifyParams(updated, merged);
@@ -65,15 +63,15 @@ class PcTypeServiceTest {
 
     @Test
     void getAll() {
-        pcTypeService.save(validDto);
+        pcTypeService.save(pcTypeRequestDto);
         var types = pcTypeService.getAll();
         assertFalse(types.isEmpty());
     }
 
     @Test
     void delete() {
-        PcType type = pcTypeService.save(validDto);
-        Long id = type.getId();
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
+        Long id = type.id();
 
         pcTypeService.delete(id);
 
@@ -81,11 +79,11 @@ class PcTypeServiceTest {
         assertTrue(ex.getMessage().contains("does not exist"));
     }
 
-    private void verifyParams(PcType type, PcTypeDto dto) {
-        assertEquals(dto.name(), type.getName());
-        assertEquals(dto.cpu(), type.getCpu());
-        assertEquals(dto.ram(), type.getRam());
-        assertEquals(dto.gpu(), type.getGpu());
+    private void verifyParams(PcTypeResponseDto output, PcTypeRequestDto expected) {
+        assertEquals(expected.name(), output.name());
+        assertEquals(expected.cpu(), output.cpu());
+        assertEquals(expected.ram(), output.ram());
+        assertEquals(expected.gpu(), output.gpu());
     }
 }
 

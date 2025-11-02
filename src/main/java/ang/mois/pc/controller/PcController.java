@@ -1,7 +1,8 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.PcDto;
-import ang.mois.pc.entity.Pc;
+import ang.mois.pc.dto.request.PcRequestDto;
+import ang.mois.pc.dto.response.PcResponseDto;
+import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
 import ang.mois.pc.service.RoomService;
@@ -25,36 +26,37 @@ public class PcController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Pc>> getAll() {
+    public ResponseEntity<List<PcResponseDto>> getAll() {
         return ResponseEntity.ok(pcService.getAll());
     }
 
     @GetMapping(params="computerRoomId")
-    public ResponseEntity<List<Pc>> getByRoom(@RequestParam(name="computerRoomId") Long computerRoomId) {
-        Room room = roomService.getById(computerRoomId);
-        return ResponseEntity.ok(pcService.getByRoom(room));
+    public ResponseEntity<List<PcResponseDto>> getByRoom(@RequestParam(name="computerRoomId") Long computerRoomId) {
+        return ResponseEntity.ok(pcService.getByRoom(computerRoomId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pc> getById(@PathVariable Long id) {
+    public ResponseEntity<PcResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(pcService.getById(id));
     }
 
     @GetMapping(value="/{id}", params = "unwrap")
-    public ResponseEntity<Pc> getById(@PathVariable Long id, @RequestParam(name="unwrap") boolean unwrap) {
-        // todo make unwrap
+    public ResponseEntity<Object> getById(@PathVariable Long id, @RequestParam(name="unwrap") boolean unwrap) {
+        if(unwrap) {
+            return ResponseEntity.ok(pcService.getByIdUnwrapped(id));
+        }
         return ResponseEntity.ok(pcService.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Pc> addPc(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcDto pcDto) {
-        Pc saved = pcService.save(pcDto);
+    public ResponseEntity<PcResponseDto> addPc(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcRequestDto pcRequestDto) {
+        PcResponseDto saved = pcService.save(pcRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pc> updatePc(@PathVariable Long id, @Validated @RequestBody PcDto pcDto) {
-        Pc updated = pcService.update(id, pcDto);
+    public ResponseEntity<PcResponseDto> updatePc(@PathVariable Long id, @Validated @RequestBody PcRequestDto pcRequestDto) {
+        PcResponseDto updated = pcService.update(id, pcRequestDto);
         return ResponseEntity.ok(updated);
     }
 
