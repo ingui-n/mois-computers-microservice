@@ -22,7 +22,7 @@ public class Faculty {
     private Integer maxUserReservationTimeWeekly; // weekly in minutes
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "faculty")
     @JsonIgnore
     private List<Room> rooms;
 

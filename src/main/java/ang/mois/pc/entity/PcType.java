@@ -18,7 +18,7 @@ public class PcType {
     private String gpu;
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "pcType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pcType")
     @JsonIgnore
     private List<Pc> pcs;
 

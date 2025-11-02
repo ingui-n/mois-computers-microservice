@@ -16,10 +16,10 @@ public class Room {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "faculty_id", nullable = false) // or just id?
+    @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Pc> pcs;
 

@@ -5,6 +5,7 @@ import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.mapper.FacultyMapper;
 import ang.mois.pc.repository.FacultyRepository;
+import ang.mois.pc.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +13,12 @@ import java.util.List;
 @Service
 public class FacultyService {
     private final FacultyRepository facultyRepository;
+    private final RoomRepository roomRepository;
     private final FacultyMapper facultyMapper;
 
-    public FacultyService(FacultyRepository facultyRepository, FacultyMapper facultyMapper) {
+    public FacultyService(FacultyRepository facultyRepository, RoomRepository roomRepository, FacultyMapper facultyMapper) {
         this.facultyRepository = facultyRepository;
+        this.roomRepository = roomRepository;
         this.facultyMapper = facultyMapper;
     }
 
@@ -34,7 +37,18 @@ public class FacultyService {
     }
 
     public void delete(Long id) {
-        // Delete proběhne pouze pokud neexistuje ani jedna computerRoom, která by měla FK facultyId. TODO
+        // check if faculty even exists
+        if (!facultyRepository.existsById(id)) {
+            throw new IllegalArgumentException("Faculty not found: " + id);
+        }
+
+        // delete only if no room references this faculty as an FK
+        if (roomRepository.existsByFacultyId(id)) {
+            throw new FKConflictException(
+                    "Cannot delete faculty with id:  " + id +", because there are still rooms associated with it."
+            );
+        }
+
         facultyRepository.deleteById(id);
     }
 

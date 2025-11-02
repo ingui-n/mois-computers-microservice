@@ -99,10 +99,7 @@ public class PcService {
     }
 
     public List<PcResponseDto> getByRoom(Long roomId) {
-        Room room = roomRepository.findById(roomId).orElseThrow(
-                ()-> new IllegalArgumentException("Room with id " + roomId + " does not exist")
-        );
-        return pcMapper.toResponseDtoList(pcRepository.findByRoom(room));
+        return pcMapper.toResponseDtoList(pcRepository.findByRoomId(roomId));
     }
 
     public List<PcResponseDto> getByType(PcType type) {

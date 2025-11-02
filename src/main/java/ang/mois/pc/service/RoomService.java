@@ -6,6 +6,7 @@ import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.mapper.RoomMapper;
 import ang.mois.pc.repository.FacultyRepository;
+import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,13 @@ import java.util.List;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final FacultyRepository facultyRepository;
+    private final PcRepository pcRepository;
     private final RoomMapper roomMapper;
 
-    public RoomService(RoomRepository roomRepository, FacultyRepository facultyRepository, RoomMapper roomMapper) {
+    public RoomService(RoomRepository roomRepository, FacultyRepository facultyRepository, PcRepository pcRepository, RoomMapper roomMapper) {
         this.roomRepository = roomRepository;
         this.facultyRepository = facultyRepository;
+        this.pcRepository = pcRepository;
         this.roomMapper = roomMapper;
     }
 
@@ -33,8 +36,7 @@ public class RoomService {
     }
 
     public List<RoomResponseDto> getByFaculty(Long facultyId) {
-        Faculty faculty = getFaculty(facultyId);
-        return roomMapper.toResponseDtoList(roomRepository.findByFaculty(faculty));
+        return roomMapper.toResponseDtoList(roomRepository.findByFacultyId(facultyId));
     }
 
     public RoomResponseDto save(RoomRequestDto createRoomRequestDto) {
@@ -47,6 +49,18 @@ public class RoomService {
     }
 
     public void delete(Long id) {
+        // verify if room exists
+        if(!roomRepository.existsById(id)) {
+            throw new IllegalArgumentException("Room with id " + id + " does not exist");
+        }
+
+        if(pcRepository.existsByRoomId(id)) {
+            throw new FKConflictException(
+                    "Cannot delete room with id: " + id + ", because there are still computers associated with it."
+            );
+        }
+
+        // delete only if no computer references this room
         roomRepository.deleteById(id);
     }
 

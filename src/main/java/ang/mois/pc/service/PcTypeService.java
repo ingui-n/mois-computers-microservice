@@ -4,6 +4,7 @@ import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.dto.response.PcTypeResponseDto;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.mapper.PcTypeMapper;
+import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,12 @@ import java.util.List;
 @Service
 public class PcTypeService {
     private final PcTypeRepository pcTypeRepository;
+    private final PcRepository pcRepository;
     private final PcTypeMapper pcTypeMapper;
 
-    public PcTypeService(PcTypeRepository pcTypeRepository, PcTypeMapper pcTypeMapper) {
+    public PcTypeService(PcTypeRepository pcTypeRepository, PcRepository pcRepository, PcTypeMapper pcTypeMapper) {
         this.pcTypeRepository = pcTypeRepository;
+        this.pcRepository = pcRepository;
         this.pcTypeMapper = pcTypeMapper;
     }
 
@@ -34,6 +37,17 @@ public class PcTypeService {
     }
 
     public void delete(Long typeId) {
+        // check if type exists
+        if(!pcTypeRepository.existsById(typeId)) {
+            throw new IllegalArgumentException("PcType with id " + typeId + " does not exist");
+        }
+
+        // delete if no computer references this type?
+        if(pcRepository.existsByPcTypeId(typeId)) {
+            throw new FKConflictException(
+                    "Cannot delete PcType with id: " + " , because there are still computers associated with it."
+            );
+        }
         pcTypeRepository.deleteById(typeId);
     }
 
