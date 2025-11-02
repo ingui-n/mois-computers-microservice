@@ -1,6 +1,7 @@
 package ang.mois.pc.service;
 
 import ang.mois.pc.dto.request.FacultyRequestDto;
+import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.mapper.FacultyMapper;
 import ang.mois.pc.repository.FacultyRepository;
@@ -18,18 +19,19 @@ public class FacultyService {
         this.facultyMapper = facultyMapper;
     }
 
-    public Faculty getById(Long id) {
-        return facultyRepository.findById(id)
+    public FacultyResponseDto getById(Long id) {
+       Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
+       return facultyMapper.toResponseDto(faculty);
     }
 
-    public List<Faculty> getAll() {
-        return facultyRepository.findAll();
+    public List<FacultyResponseDto> getAll() {
+        return facultyMapper.toResponseDtoList(facultyRepository.findAll());
     }
 
-    public Faculty save(FacultyRequestDto facultyRequestDto) {
+    public FacultyResponseDto save(FacultyRequestDto facultyRequestDto) {
         Faculty faculty = facultyMapper.toEntity(facultyRequestDto);
-        return facultyRepository.save(faculty);
+        return facultyMapper.toResponseDto(facultyRepository.save(faculty));
     }
 
     public void delete(Long id) {
@@ -37,11 +39,12 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-    public Faculty update(Long id, FacultyRequestDto facultyRequestDto) {
-        Faculty faculty = getById(id);
+    public FacultyResponseDto update(Long id, FacultyRequestDto facultyRequestDto) {
+        Faculty faculty = facultyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Faculty with id " + id + " does not exist"));
         // merge entities - basically copy non-null values to existing faculty
         facultyMapper.updateEntityFromDto(facultyRequestDto, faculty);
 
-        return facultyRepository.save(faculty);
+        return facultyMapper.toResponseDto(facultyRepository.save(faculty));
     }
 }

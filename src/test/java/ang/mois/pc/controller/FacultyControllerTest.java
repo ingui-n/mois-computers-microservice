@@ -2,7 +2,7 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.FacultyRequestDto;
-import ang.mois.pc.entity.Faculty;
+import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.service.FacultyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -42,7 +43,7 @@ class FacultyControllerTest {
     private FacultyService facultyService;
 
     private FacultyRequestDto validDto;
-    private Faculty facultyEntity;
+    private FacultyResponseDto responseDto;
 
     private final String apiPath = "/faculty";
 
@@ -60,14 +61,24 @@ class FacultyControllerTest {
         );
 
         // A mock entity to be returned by the service
-        facultyEntity = new Faculty();
+        responseDto = new FacultyResponseDto(
+                1L,
+                "Faculty of Informatics",
+                "FI",
+                Time.valueOf("08:00:00"),
+                Time.valueOf("20:00:00"),
+                5,
+                90,
+                180,
+                LocalDateTime.now()
+        );
     }
 
     /* POST /faculty tests */
 
     @Test
     void addValidFaculty() throws Exception {
-        when(facultyService.save(any(FacultyRequestDto.class))).thenReturn(facultyEntity);
+        when(facultyService.save(any(FacultyRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,7 +144,7 @@ class FacultyControllerTest {
                 null
         );
 
-        when(facultyService.update(eq(1L), any(FacultyRequestDto.class))).thenReturn(facultyEntity);
+        when(facultyService.update(eq(1L), any(FacultyRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(put(apiPath.concat("/1"))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -189,7 +200,7 @@ class FacultyControllerTest {
 
     @Test
     void getAllFaculties() throws Exception {
-        when(facultyService.getAll()).thenReturn(List.of(facultyEntity));
+        when(facultyService.getAll()).thenReturn(List.of(responseDto));
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
@@ -199,7 +210,7 @@ class FacultyControllerTest {
 
     @Test
     void getFacultyById() throws Exception {
-        when(facultyService.getById(1L)).thenReturn(facultyEntity);
+        when(facultyService.getById(1L)).thenReturn(responseDto);
 
         mockMvc.perform(get(apiPath.concat("/1")))
                 .andExpect(status().isOk());

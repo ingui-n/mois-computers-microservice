@@ -2,7 +2,7 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.RoomRequestDto;
-import ang.mois.pc.entity.Faculty;
+import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.service.RoomService;
@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -40,7 +42,7 @@ public class RoomControllerTest {
 
     private RoomRequestDto validDto;
     private Room roomEntity;
-    private Faculty faculty;
+    private FacultyResponseDto faculty;
     private final String apiPath = "/computerRoom";
 
     @BeforeEach
@@ -51,7 +53,17 @@ public class RoomControllerTest {
         );
 
         roomEntity = new Room();
-        faculty = new Faculty();
+        faculty = new FacultyResponseDto(
+                1L,
+                "Faculty of Informatics",
+                "FI",
+                Time.valueOf("08:00:00"),
+                Time.valueOf("20:00:00"),
+                5,
+                90,
+                180,
+                LocalDateTime.now()
+        );
     }
 
     /* POST /computerRoom tests */
@@ -146,13 +158,13 @@ public class RoomControllerTest {
     @Test
     void getRoomsByFaculty() throws Exception {
         when(facultyService.getById(1L)).thenReturn(faculty);
-        when(roomService.getByFaculty(faculty)).thenReturn(List.of(roomEntity));
+        when(roomService.getByFaculty(faculty.id())).thenReturn(List.of(roomEntity));
 
         mockMvc.perform(get(apiPath).param("facultyId", "1"))
                 .andExpect(status().isOk());
 
         verify(facultyService, times(1)).getById(1L);
-        verify(roomService, times(1)).getByFaculty(faculty);
+        verify(roomService, times(1)).getByFaculty(faculty.id());
     }
 
     /* DELETE /computerRoom/{id} */

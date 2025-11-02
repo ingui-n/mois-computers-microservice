@@ -2,7 +2,7 @@ package ang.mois.pc.service;
 
 import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.dto.request.RoomRequestDto;
-import ang.mois.pc.entity.Faculty;
+import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.entity.Room;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class RoomServiceTest {
     @Autowired
     private FacultyService facultyService;
 
-    private Faculty faculty;
+    private FacultyResponseDto faculty;
     private RoomRequestDto validDto;
 
     @BeforeEach
@@ -41,7 +41,7 @@ class RoomServiceTest {
 
         validDto = new RoomRequestDto(
                 "Room A",
-                faculty.getId()
+                faculty.id()
         );
     }
 
@@ -72,7 +72,7 @@ class RoomServiceTest {
 
         RoomRequestDto expected = new RoomRequestDto(
                 "Updated Room",
-                faculty.getId()
+                faculty.id()
         );
         verifyParams(updated, expected);
     }
@@ -80,9 +80,9 @@ class RoomServiceTest {
     @Test
     void getByFaculty() {
         roomService.save(validDto);
-        var rooms = roomService.getByFaculty(faculty);
+        var rooms = roomService.getByFaculty(faculty.id());
         assertFalse(rooms.isEmpty());
-        assertEquals(faculty.getId(), rooms.getFirst().getFaculty().getId());
+        assertEquals(faculty.id(), rooms.getFirst().getFaculty().getId());
     }
 
     @Test
