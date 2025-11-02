@@ -3,7 +3,6 @@ package ang.mois.pc.controller;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
-import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
 import ang.mois.pc.service.RoomService;
@@ -41,7 +40,6 @@ public class PcControllerTest {
     private RoomService roomService;
 
     private PcRequestDto validDto;
-    private Pc pcEntity;
     private PcResponseDto pcResponseDto;
     private Room roomEntity;
     private final String apiPath = "/computer";
@@ -54,7 +52,6 @@ public class PcControllerTest {
                 1L,
                 1L
         );
-        pcEntity = new Pc();
         pcResponseDto = new PcResponseDto(
                 1L,
                 "Gaming Pc - Best one",
@@ -69,7 +66,7 @@ public class PcControllerTest {
     /* POST /computer tests */
     @Test
     void addValid() throws Exception {
-        when(pcService.save(any(PcRequestDto.class))).thenReturn(pcEntity);
+        when(pcService.save(any(PcRequestDto.class))).thenReturn(pcResponseDto);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +133,7 @@ public class PcControllerTest {
     /* PUT /computer/{id} tests */
     @Test
     void updateValid() throws Exception {
-        when(pcService.update(eq(1L), any(PcRequestDto.class))).thenReturn(pcEntity);
+        when(pcService.update(eq(1L), any(PcRequestDto.class))).thenReturn(pcResponseDto);
         PcRequestDto partialDto = new PcRequestDto(
                 "Updated Pc Name",
                 Boolean.FALSE,
@@ -185,7 +182,7 @@ public class PcControllerTest {
     @Test
     void getPcsByRoom() throws Exception {
         when(roomService.getById(1L)).thenReturn(roomEntity);
-        when(pcService.getByRoom(roomEntity)).thenReturn(List.of(pcEntity));
+        when(pcService.getByRoom(roomEntity)).thenReturn(List.of(pcResponseDto));
 
         mockMvc.perform(get(apiPath).param("computerRoomId", "1"))
                 .andExpect(status().isOk());
@@ -197,7 +194,7 @@ public class PcControllerTest {
     /* GET /computer/{id} tests */
     @Test
     void getPcById() throws Exception {
-        when(pcService.getById(1L)).thenReturn(pcEntity);
+        when(pcService.getById(1L)).thenReturn(pcResponseDto);
 
         mockMvc.perform(get(apiPath.concat("/1")))
                 .andExpect(status().isOk());
@@ -208,7 +205,7 @@ public class PcControllerTest {
     /* GET /computer/{id}?unwrap=true tests */
     @Test
     void getPcByIdUnwrap() throws Exception {
-        when(pcService.getById(1L)).thenReturn(pcEntity);
+        when(pcService.getById(1L)).thenReturn(pcResponseDto);
 
         mockMvc.perform(get(apiPath.concat("/1")).param("unwrap", "true"))
                 .andExpect(status().isOk());

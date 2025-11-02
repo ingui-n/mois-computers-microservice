@@ -1,8 +1,8 @@
 package ang.mois.pc.service;
 
 import ang.mois.pc.dto.request.PcRequestDto;
+import ang.mois.pc.dto.response.PcResponseDto;
 import ang.mois.pc.entity.Faculty;
-import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.repository.FacultyRepository;
@@ -13,12 +13,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class PcServiceTest {
 
     @Autowired
@@ -69,30 +71,28 @@ class PcServiceTest {
 
     @Test
     void save() {
-        Pc pc = pcService.save(validDto);
+        PcResponseDto pc = pcService.save(validDto);
 
         assertNotNull(pc);
-        assertEquals(validDto.name(), pc.getName());
-        assertEquals(validDto.available(), pc.isAvailable());
-        assertNotNull(pc.getRoom());
-        assertNotNull(pc.getPcType());
-        assertEquals(savedRoom.getId(), pc.getRoom().getId());
-        assertEquals(savedType.getId(), pc.getPcType().getId());
+        assertEquals(validDto.name(), pc.name());
+        assertEquals(validDto.available(), pc.available());
+        assertEquals(savedRoom.getId(), pc.computerRoomId());
+        assertEquals(savedType.getId(), pc.configId());
     }
 
     @Test
     void getById() {
-        Pc pc = pcService.save(validDto);
-        Pc found = pcService.getById(pc.getId());
+        PcResponseDto pc = pcService.save(validDto);
+        PcResponseDto found = pcService.getById(pc.id());
 
         assertNotNull(found);
-        assertEquals(pc.getId(), found.getId());
-        assertEquals(pc.getName(), found.getName());
+        assertEquals(pc.id(), found.id());
+        assertEquals(pc.name(), found.name());
     }
 
     @Test
     void update() {
-        Pc pc = pcService.save(validDto);
+        PcResponseDto pc = pcService.save(validDto);
 
         // prepare a DTO that updates the name and sets availability false
         PcRequestDto updateDto = new PcRequestDto(
@@ -102,17 +102,17 @@ class PcServiceTest {
                 null  // keep old type
         );
 
-        Pc updated = pcService.update(pc.getId(), updateDto);
+        PcResponseDto updated = pcService.update(pc.id(), updateDto);
 
-        assertEquals("Updated Name", updated.getName());
-        assertFalse(updated.isAvailable());
-        assertEquals(pc.getRoom().getId(), updated.getRoom().getId());
-        assertEquals(pc.getPcType().getId(), updated.getPcType().getId());
+        assertEquals("Updated Name", updated.name());
+        assertFalse(updated.available());
+        assertEquals(pc.computerRoomId(), updated.computerRoomId());
+        assertEquals(pc.configId(), updated.configId());
     }
 
     @Test
     void update_changeRelations() {
-        Pc pc = pcService.save(validDto);
+        PcResponseDto pc = pcService.save(validDto);
 
         // new relations
         Room newRoom = new Room();
@@ -134,37 +134,37 @@ class PcServiceTest {
                 newType.getId()
         );
 
-        Pc updated = pcService.update(pc.getId(), updateDto);
+        PcResponseDto updated = pcService.update(pc.id(), updateDto);
 
-        assertEquals("Moved PC", updated.getName());
-        assertEquals(newRoom.getId(), updated.getRoom().getId());
-        assertEquals(newType.getId(), updated.getPcType().getId());
+        assertEquals("Moved PC", updated.name());
+        assertEquals(newRoom.getId(), updated.computerRoomId());
+        assertEquals(newType.getId(), updated.configId());
     }
 
     @Test
     void getByRoom() {
-        Pc pc = pcService.save(validDto);
-        List<Pc> pcs = pcService.getByRoom(savedRoom);
+        PcResponseDto pc = pcService.save(validDto);
+        List<PcResponseDto> pcs = pcService.getByRoom(savedRoom);
 
         assertFalse(pcs.isEmpty());
-        assertTrue(pcs.stream().anyMatch(p -> p.getId().equals(pc.getId())));
+        assertTrue(pcs.stream().anyMatch(p -> p.id().equals(pc.id())));
     }
 
     @Test
     void getByType() {
-        Pc pc = pcService.save(validDto);
-        List<Pc> pcs = pcService.getByType(savedType);
+        PcResponseDto pc = pcService.save(validDto);
+        List<PcResponseDto> pcs = pcService.getByType(savedType);
 
         assertFalse(pcs.isEmpty());
-        assertTrue(pcs.stream().anyMatch(p -> p.getId().equals(pc.getId())));
+        assertTrue(pcs.stream().anyMatch(p -> p.id().equals(pc.id())));
     }
 
     @Test
     void delete() {
-        Pc pc = pcService.save(validDto);
-        pcService.delete(pc.getId());
+        PcResponseDto pc = pcService.save(validDto);
+        pcService.delete(pc.id());
 
-        assertFalse(pcRepository.findById(pc.getId()).isPresent());
+        assertFalse(pcRepository.findById(pc.id()).isPresent());
     }
 
     @Test
