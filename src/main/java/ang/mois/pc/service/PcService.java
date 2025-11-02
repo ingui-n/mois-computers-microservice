@@ -2,6 +2,7 @@ package ang.mois.pc.service;
 
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
+import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
@@ -39,6 +40,13 @@ public class PcService {
                 .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
 
         return pcMapper.toResponseDto(pc);
+    }
+
+    public PcUnwrappedResponseDto getByIdUnwrapped(Long id) {
+        Pc pc = pcRepository.findById(id)
+                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
+
+        return pcMapper.toUnwrappedResponseDto(pc);
     }
 
     public PcResponseDto save(PcRequestDto pcRequestDto) {

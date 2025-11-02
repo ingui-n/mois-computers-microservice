@@ -1,6 +1,7 @@
 package ang.mois.pc.mapper;
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
+import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
 import ang.mois.pc.entity.Pc;
 import org.mapstruct.*;
 import java.util.List;
@@ -22,10 +23,18 @@ public interface PcMapper {
     void updateEntityFromDto(PcRequestDto dto, @MappingTarget Pc entity);
 
 
-    // Response: Entity → Response DTO
+    // Response: Entity - Response DTO with flattened FK
     @Mapping(target = "computerRoomId", source = "room.id")
     @Mapping(target = "configId", source = "pcType.id")
     PcResponseDto toResponseDto(Pc entity);
 
     List<PcResponseDto> toResponseDtoList(List<Pc> entities);
+
+    // Response: Entity - Response Unwrapped Dto
+    @Mapping(target = "computerRoom", source = "room")
+    @Mapping(target = "computerRoom.facultyId", source = "room.faculty.id")
+    @Mapping(target = "computerConfig", source = "pcType")
+    PcUnwrappedResponseDto toUnwrappedResponseDto(Pc entity);
+
+    List<PcUnwrappedResponseDto> toUnwrappedResponseDtoList(List<Pc> entities);
 }

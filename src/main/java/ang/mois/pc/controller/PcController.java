@@ -2,6 +2,7 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
+import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
 import ang.mois.pc.service.RoomService;
@@ -41,8 +42,10 @@ public class PcController {
     }
 
     @GetMapping(value="/{id}", params = "unwrap")
-    public ResponseEntity<PcResponseDto> getById(@PathVariable Long id, @RequestParam(name="unwrap") boolean unwrap) {
-        // todo make unwrap
+    public ResponseEntity<Object> getById(@PathVariable Long id, @RequestParam(name="unwrap") boolean unwrap) {
+        if(unwrap) {
+            return ResponseEntity.ok(pcService.getByIdUnwrapped(id));
+        }
         return ResponseEntity.ok(pcService.getById(id));
     }
 
