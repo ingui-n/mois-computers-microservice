@@ -2,7 +2,7 @@ package ang.mois.pc.controller;
 
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.PcTypeRequestDto;
-import ang.mois.pc.entity.PcType;
+import ang.mois.pc.dto.response.PcTypeResponseDto;
 import ang.mois.pc.service.PcTypeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +39,7 @@ class PcTypeControllerTest {
     private PcTypeService pcTypeService;
 
     private PcTypeRequestDto validDto;
-    private PcType entity;
+    private PcTypeResponseDto responseDto;
 
     private final String apiPath = "/computerConfig";
 
@@ -51,13 +52,20 @@ class PcTypeControllerTest {
                 "RTX 4090"
         );
 
-        entity = new PcType();
+        responseDto = new PcTypeResponseDto(
+                1L,
+                "Gaming PC",
+                "Intel i9",
+                "32GB",
+                "RTX 4090",
+                LocalDateTime.now()
+        );
     }
 
     // --- GET /computerConfig ---
     @Test
     void getAllPcTypes() throws Exception {
-        when(pcTypeService.getAll()).thenReturn(List.of(entity));
+        when(pcTypeService.getAll()).thenReturn(List.of(responseDto));
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
@@ -68,7 +76,7 @@ class PcTypeControllerTest {
     // --- GET /computerConfig/{id} ---
     @Test
     void getPcTypeById() throws Exception {
-        when(pcTypeService.getById(1L)).thenReturn(entity);
+        when(pcTypeService.getById(1L)).thenReturn(responseDto);
 
         mockMvc.perform(get(apiPath + "/1"))
                 .andExpect(status().isOk());
@@ -79,7 +87,7 @@ class PcTypeControllerTest {
     // --- POST /computerConfig ---
     @Test
     void addValidPcType() throws Exception {
-        when(pcTypeService.save(any(PcTypeRequestDto.class))).thenReturn(entity);
+        when(pcTypeService.save(any(PcTypeRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,7 +143,7 @@ class PcTypeControllerTest {
                 "RTX 4080"
         );
 
-        when(pcTypeService.update(eq(1L), any(PcTypeRequestDto.class))).thenReturn(entity);
+        when(pcTypeService.update(eq(1L), any(PcTypeRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(put(apiPath + "/1")
                         .contentType(MediaType.APPLICATION_JSON)

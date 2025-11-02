@@ -1,7 +1,9 @@
 package ang.mois.pc.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -14,8 +16,10 @@ public class PcType {
     private String cpu;
     private String ram;
     private String gpu;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "pcType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Pc> pcs;
 
     public PcType(String name, String cpu, String ram, String gpu) {
@@ -23,6 +27,7 @@ public class PcType {
         this.cpu = cpu;
         this.ram = ram;
         this.gpu = gpu;
+        this.createdAt = LocalDateTime.now();
     }
 
     public PcType() {
@@ -74,5 +79,9 @@ public class PcType {
 
     public void setPcs(List<Pc> pcs) {
         this.pcs = pcs;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
