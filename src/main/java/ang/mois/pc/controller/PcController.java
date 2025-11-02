@@ -32,8 +32,7 @@ public class PcController {
 
     @GetMapping(params="computerRoomId")
     public ResponseEntity<List<PcResponseDto>> getByRoom(@RequestParam(name="computerRoomId") Long computerRoomId) {
-        Room room = roomService.getById(computerRoomId);
-        return ResponseEntity.ok(pcService.getByRoom(room));
+        return ResponseEntity.ok(pcService.getByRoom(computerRoomId));
     }
 
     @GetMapping("/{id}")

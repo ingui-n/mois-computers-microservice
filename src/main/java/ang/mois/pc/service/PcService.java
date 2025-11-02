@@ -103,7 +103,10 @@ public class PcService {
         pcRepository.deleteById(id);
     }
 
-    public List<PcResponseDto> getByRoom(Room room) {
+    public List<PcResponseDto> getByRoom(Long roomId) {
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                ()-> new IllegalArgumentException("Room with id " + roomId + " does not exist")
+        );
         return pcMapper.toResponseDtoList(pcRepository.findByRoom(room));
     }
 

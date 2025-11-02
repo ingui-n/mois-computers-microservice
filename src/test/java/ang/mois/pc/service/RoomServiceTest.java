@@ -3,18 +3,21 @@ package ang.mois.pc.service;
 import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
-import ang.mois.pc.entity.Room;
+import ang.mois.pc.dto.response.RoomResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.List;
 
 @SpringBootTest
+@Transactional
 class RoomServiceTest {
 
     @Autowired
@@ -47,28 +50,28 @@ class RoomServiceTest {
 
     @Test
     void save() {
-        Room room = roomService.save(validDto);
+        RoomResponseDto room = roomService.save(validDto);
         assertNotNull(room);
         verifyParams(room, validDto);
     }
 
     @Test
     void getById() {
-        Room saved = roomService.save(validDto);
-        Room fetched = roomService.getById(saved.getId());
+        RoomResponseDto saved = roomService.save(validDto);
+        RoomResponseDto fetched = roomService.getById(saved.id());
         verifyParams(fetched, validDto);
     }
 
     @Test
     void update() {
-        Room saved = roomService.save(validDto);
+        RoomResponseDto saved = roomService.save(validDto);
 
         RoomRequestDto updateDto = new RoomRequestDto(
                 "Updated Room",
                 null
         );
 
-        Room updated = roomService.update(saved.getId(), updateDto);
+        RoomResponseDto updated = roomService.update(saved.id(), updateDto);
 
         RoomRequestDto expected = new RoomRequestDto(
                 "Updated Room",
@@ -80,24 +83,24 @@ class RoomServiceTest {
     @Test
     void getByFaculty() {
         roomService.save(validDto);
-        var rooms = roomService.getByFaculty(faculty.id());
+        List<RoomResponseDto> rooms = roomService.getByFaculty(faculty.id());
         assertFalse(rooms.isEmpty());
-        assertEquals(faculty.id(), rooms.getFirst().getFaculty().getId());
+        assertEquals(faculty.id(), rooms.getFirst().facultyId());
     }
 
     @Test
     void delete() {
-        Room saved = roomService.save(validDto);
-        Long id = saved.getId();
+        RoomResponseDto saved = roomService.save(validDto);
+        Long id = saved.id();
         roomService.delete(id);
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> roomService.getById(id));
         assertTrue(ex.getMessage().contains("does not exist"));
     }
 
-    private void verifyParams(Room room, RoomRequestDto dto) {
-        assertEquals(dto.name(), room.getName());
-        assertEquals(dto.facultyId(), room.getFaculty().getId());
-        assertEquals(LocalDate.now(), room.getCreatedAt().toLocalDate());
+    private void verifyParams(RoomResponseDto room, RoomRequestDto dto) {
+        assertEquals(dto.name(), room.name());
+        assertEquals(dto.facultyId(), room.facultyId());
+        assertEquals(LocalDate.now(), room.createdAt().toLocalDate());
     }
 }

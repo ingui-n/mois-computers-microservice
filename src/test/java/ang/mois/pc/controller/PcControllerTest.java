@@ -3,7 +3,7 @@ package ang.mois.pc.controller;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
-import ang.mois.pc.entity.Room;
+import ang.mois.pc.dto.response.RoomResponseDto;
 import ang.mois.pc.service.PcService;
 import ang.mois.pc.service.RoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ public class PcControllerTest {
 
     private PcRequestDto validDto;
     private PcResponseDto pcResponseDto;
-    private Room roomEntity;
+    private RoomResponseDto roomResponseDto;
     private final String apiPath = "/computer";
 
     @BeforeEach
@@ -60,7 +60,12 @@ public class PcControllerTest {
                 1L,
                 LocalDateTime.now()
         );
-        roomEntity = new Room();
+        roomResponseDto = new RoomResponseDto(
+                1L,
+                10L,
+                "Some Room",
+                LocalDateTime.now()
+        );
     }
 
     /* POST /computer tests */
@@ -181,14 +186,14 @@ public class PcControllerTest {
     /* GET /computer?computerRoomId= tests */
     @Test
     void getPcsByRoom() throws Exception {
-        when(roomService.getById(1L)).thenReturn(roomEntity);
-        when(pcService.getByRoom(roomEntity)).thenReturn(List.of(pcResponseDto));
+        when(roomService.getById(1L)).thenReturn(roomResponseDto);
+        when(pcService.getByRoom(roomResponseDto.id())).thenReturn(List.of(pcResponseDto));
 
         mockMvc.perform(get(apiPath).param("computerRoomId", "1"))
                 .andExpect(status().isOk());
 
         verify(roomService, times(1)).getById(1L);
-        verify(pcService, times(1)).getByRoom(roomEntity);
+        verify(pcService, times(1)).getByRoom(roomResponseDto.id());
     }
 
     /* GET /computer/{id} tests */

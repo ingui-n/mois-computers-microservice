@@ -1,58 +1,68 @@
 package ang.mois.pc.service;
 
 import ang.mois.pc.dto.request.RoomRequestDto;
+import ang.mois.pc.dto.response.RoomResponseDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
+import ang.mois.pc.mapper.RoomMapper;
 import ang.mois.pc.repository.FacultyRepository;
 import ang.mois.pc.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RoomService {
     private final RoomRepository roomRepository;
     private final FacultyRepository facultyRepository;
+    private final RoomMapper roomMapper;
 
-    public RoomService(RoomRepository roomRepository, FacultyRepository facultyRepository) {
+    public RoomService(RoomRepository roomRepository, FacultyRepository facultyRepository, RoomMapper roomMapper) {
         this.roomRepository = roomRepository;
         this.facultyRepository = facultyRepository;
+        this.roomMapper = roomMapper;
     }
 
-    public List<Room> getAll() {
-        return roomRepository.findAll();
+    public List<RoomResponseDto> getAll() {
+        return roomMapper.toResponseDtoList(roomRepository.findAll());
     }
 
-    public Room getById(Long id) {
-        return roomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Room with id " + id + " does not exist"));
+    public RoomResponseDto getById(Long id) {
+        Room room = getRoom(id);
+        return roomMapper.toResponseDto(room);
     }
 
-    public List<Room> getByFaculty(Long facultyId) {
-        Optional<Faculty> faculty = facultyRepository.findById(facultyId);
-        if (faculty.isEmpty()) {
-            throw new IllegalArgumentException("Faculty with id " + facultyId + " does not exist");
-        }
-        return roomRepository.findByFaculty(faculty.get());
+    public List<RoomResponseDto> getByFaculty(Long facultyId) {
+        Faculty faculty = getFaculty(facultyId);
+        return roomMapper.toResponseDtoList(roomRepository.findByFaculty(faculty));
     }
 
-    public Room save(RoomRequestDto createRoomRequestDto) {
-        Optional<Faculty> faculty = facultyRepository.findById(createRoomRequestDto.facultyId());
-        if (faculty.isEmpty()) {
-            throw new IllegalArgumentException("Faculty with id " + createRoomRequestDto.facultyId() + " does not exist");
-        }
-        Room room = new Room(createRoomRequestDto.name(), faculty.get());
-        return roomRepository.save(room);
+    public RoomResponseDto save(RoomRequestDto createRoomRequestDto) {
+        Faculty faculty = getFaculty(createRoomRequestDto.facultyId());
+
+        Room room = roomMapper.toEntity(createRoomRequestDto);
+        room.setFaculty(faculty);
+
+        return roomMapper.toResponseDto(roomRepository.save(room));
     }
 
     public void delete(Long id) {
         roomRepository.deleteById(id);
     }
 
-    public Room update(Long idR, RoomRequestDto roomRequestDto) {
-        Room room = getById(idR);
+    public RoomResponseDto update(Long idR, RoomRequestDto roomRequestDto) {
+        Room room = getRoom(idR);
         if (roomRequestDto.name() != null) room.setName(roomRequestDto.name());
-        return roomRepository.save(room);
+        return roomMapper.toResponseDto(roomRepository.save(room));
+    }
+
+    private Room getRoom(Long id) {
+         return roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Room with id " + id + " does not exist"));
+    }
+
+    private Faculty getFaculty(Long facultyId) {
+        return facultyRepository.findById(facultyId).orElseThrow(
+                ()-> new IllegalArgumentException("Faculty with id " + facultyId + " does not exist"));
     }
 }

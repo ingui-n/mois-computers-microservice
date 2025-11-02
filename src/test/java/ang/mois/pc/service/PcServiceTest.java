@@ -144,7 +144,7 @@ class PcServiceTest {
     @Test
     void getByRoom() {
         PcResponseDto pc = pcService.save(validDto);
-        List<PcResponseDto> pcs = pcService.getByRoom(savedRoom);
+        List<PcResponseDto> pcs = pcService.getByRoom(savedRoom.getId());
 
         assertFalse(pcs.isEmpty());
         assertTrue(pcs.stream().anyMatch(p -> p.id().equals(pc.id())));

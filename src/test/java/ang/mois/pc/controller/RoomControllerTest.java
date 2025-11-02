@@ -3,7 +3,7 @@ package ang.mois.pc.controller;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
-import ang.mois.pc.entity.Room;
+import ang.mois.pc.dto.response.RoomResponseDto;
 import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.service.RoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ public class RoomControllerTest {
     private FacultyService facultyService;
 
     private RoomRequestDto validDto;
-    private Room roomEntity;
+    private RoomResponseDto roomResponseDto;
     private FacultyResponseDto faculty;
     private final String apiPath = "/computerRoom";
 
@@ -52,7 +52,12 @@ public class RoomControllerTest {
                 1L
         );
 
-        roomEntity = new Room();
+        roomResponseDto = new RoomResponseDto(
+                1L,
+                1L,
+                "Main Lab",
+                LocalDateTime.now()
+        );
         faculty = new FacultyResponseDto(
                 1L,
                 "Faculty of Informatics",
@@ -69,7 +74,7 @@ public class RoomControllerTest {
     /* POST /computerRoom tests */
     @Test
     void addValid() throws Exception {
-        when(roomService.save(any(RoomRequestDto.class))).thenReturn(roomEntity);
+        when(roomService.save(any(RoomRequestDto.class))).thenReturn(roomResponseDto);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +119,7 @@ public class RoomControllerTest {
     /* PUT /computerRoom/{id} tests */
     @Test
     void updateValid() throws Exception {
-        when(roomService.update(eq(1L), any(RoomRequestDto.class))).thenReturn(roomEntity);
+        when(roomService.update(eq(1L), any(RoomRequestDto.class))).thenReturn(roomResponseDto);
         RoomRequestDto partialDto = new RoomRequestDto(
                 "Updated Lab",
                 null // allowed null on update
@@ -147,7 +152,7 @@ public class RoomControllerTest {
     /* GET /computerRoom and /computerRoom?facultyId= tests */
     @Test
     void getAllRooms() throws Exception {
-        when(roomService.getAll()).thenReturn(List.of(roomEntity));
+        when(roomService.getAll()).thenReturn(List.of(roomResponseDto));
 
         mockMvc.perform(get(apiPath))
                 .andExpect(status().isOk());
@@ -158,7 +163,7 @@ public class RoomControllerTest {
     @Test
     void getRoomsByFaculty() throws Exception {
         when(facultyService.getById(1L)).thenReturn(faculty);
-        when(roomService.getByFaculty(faculty.id())).thenReturn(List.of(roomEntity));
+        when(roomService.getByFaculty(faculty.id())).thenReturn(List.of(roomResponseDto));
 
         mockMvc.perform(get(apiPath).param("facultyId", "1"))
                 .andExpect(status().isOk());
