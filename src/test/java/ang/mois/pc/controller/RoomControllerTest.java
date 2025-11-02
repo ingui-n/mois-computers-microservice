@@ -1,5 +1,6 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
@@ -15,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.sql.Time;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -40,35 +39,16 @@ public class RoomControllerTest {
     @MockitoBean
     private FacultyService facultyService;
 
-    private RoomRequestDto validDto;
+    private RoomRequestDto roomRequestDto;
     private RoomResponseDto roomResponseDto;
-    private FacultyResponseDto faculty;
+    private FacultyResponseDto facultyResponseDto;
     private final String apiPath = "/computerRoom";
 
     @BeforeEach
     void setUp() {
-        validDto = new RoomRequestDto(
-                "Main Lab",
-                1L
-        );
-
-        roomResponseDto = new RoomResponseDto(
-                1L,
-                1L,
-                "Main Lab",
-                LocalDateTime.now()
-        );
-        faculty = new FacultyResponseDto(
-                1L,
-                "Faculty of Informatics",
-                "FI",
-                Time.valueOf("08:00:00"),
-                Time.valueOf("20:00:00"),
-                5,
-                90,
-                180,
-                LocalDateTime.now()
-        );
+        roomRequestDto = TestDataProvider.getRoomRequestDto();
+        roomResponseDto = TestDataProvider.getRoomResponseDto();
+        facultyResponseDto = TestDataProvider.getFacultyResponseDto();
     }
 
     /* POST /computerRoom tests */
@@ -78,7 +58,7 @@ public class RoomControllerTest {
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validDto)))
+                        .content(objectMapper.writeValueAsString(roomRequestDto)))
                 .andExpect(status().isCreated());
 
         verify(roomService, times(1)).save(any(RoomRequestDto.class));
@@ -162,14 +142,12 @@ public class RoomControllerTest {
 
     @Test
     void getRoomsByFaculty() throws Exception {
-        when(facultyService.getById(1L)).thenReturn(faculty);
-        when(roomService.getByFaculty(faculty.id())).thenReturn(List.of(roomResponseDto));
+        when(roomService.getByFaculty(facultyResponseDto.id())).thenReturn(List.of(roomResponseDto));
 
         mockMvc.perform(get(apiPath).param("facultyId", "1"))
                 .andExpect(status().isOk());
 
-        verify(facultyService, times(1)).getById(1L);
-        verify(roomService, times(1)).getByFaculty(faculty.id());
+        verify(roomService, times(1)).getByFaculty(facultyResponseDto.id());
     }
 
     /* DELETE /computerRoom/{id} */

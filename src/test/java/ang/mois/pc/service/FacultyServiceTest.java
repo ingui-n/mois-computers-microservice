@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
 import org.junit.jupiter.api.Test;
@@ -19,44 +20,36 @@ class FacultyServiceTest {
     @Autowired
     private FacultyService facultyService;
 
-    private FacultyRequestDto validDto;
+    private FacultyRequestDto facultyRequestDto;
 
     @BeforeEach
     void setUp() {
         // A helper to create a fully valid DTO
-        validDto = new FacultyRequestDto(
-                "Faculty of Informatics",
-                "FI",
-                Time.valueOf("08:00:00"),
-                Time.valueOf("20:00:00"),
-                5,
-                90,
-                180
-        );
+        facultyRequestDto = TestDataProvider.getFacultyRequestDto();
     }
 
     @Test
     void save() {
         // store the faculty
-        FacultyResponseDto faculty = facultyService.save(validDto);
+        FacultyResponseDto faculty = facultyService.save(facultyRequestDto);
         assertNotNull(faculty);
 
-        verifyParams(faculty, validDto);
+        verifyParams(faculty, facultyRequestDto);
     }
 
     @Test
     void getById() {
         // pre-store the faculty
-        FacultyResponseDto faculty = facultyService.save(validDto);
+        FacultyResponseDto faculty = facultyService.save(facultyRequestDto);
 
         faculty = facultyService.getById(faculty.id());
-        verifyParams(faculty, validDto);
+        verifyParams(faculty, facultyRequestDto);
     }
 
     @Test
     void update() {
         // pre-store the faculty
-        FacultyResponseDto faculty = facultyService.save(validDto);
+        FacultyResponseDto faculty = facultyService.save(facultyRequestDto);
 
         // prepare dto
         FacultyRequestDto updateDto = new FacultyRequestDto("New Name",

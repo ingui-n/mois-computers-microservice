@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.request.FacultyRequestDto;
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.dto.response.RoomResponseDto;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,15 +31,7 @@ class RoomServiceTest {
     @BeforeEach
     void setUp() {
         // Create and store a faculty to attach to the room
-        faculty = facultyService.save(new FacultyRequestDto(
-                "Faculty of Informatics",
-                "FI",
-                Time.valueOf("08:00:00"),
-                Time.valueOf("20:00:00"),
-                5,
-                90,
-                180
-        ));
+        faculty = facultyService.save(TestDataProvider.getFacultyRequestDto());
 
         validDto = new RoomRequestDto(
                 "Room A",

@@ -1,5 +1,6 @@
 package ang.mois.pc.service;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.dto.response.PcTypeResponseDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,35 +18,30 @@ class PcTypeServiceTest {
     @Autowired
     private PcTypeService pcTypeService;
 
-    private PcTypeRequestDto validDto;
+    private PcTypeRequestDto pcTypeRequestDto;
 
     @BeforeEach
     void setUp() {
-        validDto = new PcTypeRequestDto(
-                "Gaming PC",
-                "Intel i7",
-                "16GB",
-                "RTX 4070"
-        );
+        pcTypeRequestDto = TestDataProvider.getPcTypeRequestDto();
     }
 
     @Test
     void save() {
-        PcTypeResponseDto type = pcTypeService.save(validDto);
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
         assertNotNull(type);
-        verifyParams(type, validDto);
+        verifyParams(type, pcTypeRequestDto);
     }
 
     @Test
     void getById() {
-        PcTypeResponseDto type = pcTypeService.save(validDto);
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
         PcTypeResponseDto fetched = pcTypeService.getById(type.id());
-        verifyParams(fetched, validDto);
+        verifyParams(fetched, pcTypeRequestDto);
     }
 
     @Test
     void update() {
-        PcTypeResponseDto type = pcTypeService.save(validDto);
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
 
         PcTypeRequestDto updateDto = new PcTypeRequestDto(
                 "Office PC",
@@ -56,10 +52,10 @@ class PcTypeServiceTest {
 
         PcTypeResponseDto updated = pcTypeService.update(type.id(), updateDto);
         PcTypeRequestDto merged = new PcTypeRequestDto(
-                "Office PC",
-                "Intel i7",
-                "8GB",
-                "RTX 4070"
+                updateDto.name(),
+                pcTypeRequestDto.cpu(),
+                updated.ram(),
+                pcTypeRequestDto.gpu()
         );
 
         verifyParams(updated, merged);
@@ -67,14 +63,14 @@ class PcTypeServiceTest {
 
     @Test
     void getAll() {
-        pcTypeService.save(validDto);
+        pcTypeService.save(pcTypeRequestDto);
         var types = pcTypeService.getAll();
         assertFalse(types.isEmpty());
     }
 
     @Test
     void delete() {
-        PcTypeResponseDto type = pcTypeService.save(validDto);
+        PcTypeResponseDto type = pcTypeService.save(pcTypeRequestDto);
         Long id = type.id();
 
         pcTypeService.delete(id);

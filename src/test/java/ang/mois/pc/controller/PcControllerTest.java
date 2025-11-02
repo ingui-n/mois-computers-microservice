@@ -1,5 +1,6 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.dto.response.PcResponseDto;
@@ -15,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -46,26 +46,9 @@ public class PcControllerTest {
 
     @BeforeEach
     void setUp() {
-        validDto = new PcRequestDto(
-                "Gaming Pc - Best one",
-                Boolean.TRUE,
-                1L,
-                1L
-        );
-        pcResponseDto = new PcResponseDto(
-                1L,
-                "Gaming Pc - Best one",
-                Boolean.TRUE,
-                1L,
-                1L,
-                LocalDateTime.now()
-        );
-        roomResponseDto = new RoomResponseDto(
-                1L,
-                10L,
-                "Some Room",
-                LocalDateTime.now()
-        );
+        validDto = TestDataProvider.getPcRequestDto();
+        pcResponseDto = TestDataProvider.getPcResponseDto();
+        roomResponseDto = TestDataProvider.getRoomResponseDto();
     }
 
     /* POST /computer tests */
@@ -186,13 +169,11 @@ public class PcControllerTest {
     /* GET /computer?computerRoomId= tests */
     @Test
     void getPcsByRoom() throws Exception {
-        when(roomService.getById(1L)).thenReturn(roomResponseDto);
         when(pcService.getByRoom(roomResponseDto.id())).thenReturn(List.of(pcResponseDto));
 
         mockMvc.perform(get(apiPath).param("computerRoomId", "1"))
                 .andExpect(status().isOk());
 
-        verify(roomService, times(1)).getById(1L);
         verify(pcService, times(1)).getByRoom(roomResponseDto.id());
     }
 
@@ -215,9 +196,7 @@ public class PcControllerTest {
         mockMvc.perform(get(apiPath.concat("/1")).param("unwrap", "true"))
                 .andExpect(status().isOk());
 
-        // todo test the output later
-
-        verify(pcService, times(1)).getById(1L);
+        verify(pcService, times(1)).getByIdUnwrapped(1L);
     }
 
     /* DELETE /computer/{id} tests */

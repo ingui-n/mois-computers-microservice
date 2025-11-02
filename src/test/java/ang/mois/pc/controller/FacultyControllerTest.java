@@ -1,5 +1,6 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.dto.response.FacultyResponseDto;
@@ -14,7 +15,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Time;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -50,32 +50,13 @@ class FacultyControllerTest {
     @BeforeEach
     void setUp() {
         // A helper to create a fully valid DTO for OnCreate
-        validDto = new FacultyRequestDto(
-                "Faculty of Informatics",
-                "FI",
-                Time.valueOf("08:00:00"),
-                Time.valueOf("20:00:00"),
-                5,
-                90,
-                180
-        );
+        validDto = TestDataProvider.getFacultyRequestDto();
 
         // A mock entity to be returned by the service
-        responseDto = new FacultyResponseDto(
-                1L,
-                "Faculty of Informatics",
-                "FI",
-                Time.valueOf("08:00:00"),
-                Time.valueOf("20:00:00"),
-                5,
-                90,
-                180,
-                LocalDateTime.now()
-        );
+        responseDto = TestDataProvider.getFacultyResponseDto();
     }
 
-    /* POST /faculty tests */
-
+    // POST /faculty tests
     @Test
     void addValidFaculty() throws Exception {
         when(facultyService.save(any(FacultyRequestDto.class))).thenReturn(responseDto);
@@ -129,8 +110,7 @@ class FacultyControllerTest {
         verify(facultyService, never()).save(any(FacultyRequestDto.class));
     }
 
-    // --- PUT /faculty/{id} (Default Validation) Test
-
+    //  PUT /faculty/{id} (Default Validation) Test
     @Test
     void updateFaculty() throws Exception {
         // This DTO would FAIL OnCreate validation but should PASS Default validation
@@ -196,8 +176,8 @@ class FacultyControllerTest {
 
         verify(facultyService, never()).update(anyLong(), any(FacultyRequestDto.class));
     }
-    /* --- GET /faculty tests --- */
 
+    // GET /faculty tests
     @Test
     void getAllFaculties() throws Exception {
         when(facultyService.getAll()).thenReturn(List.of(responseDto));
@@ -218,8 +198,7 @@ class FacultyControllerTest {
         verify(facultyService, times(1)).getById(1L);
     }
 
-    /* --- DELETE /faculty/{id} tests --- */
-
+    // DELETE /faculty/{id} tests
     @Test
     void deleteFaculty() throws Exception {
         doNothing().when(facultyService).delete(1L);

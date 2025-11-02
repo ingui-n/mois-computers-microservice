@@ -1,5 +1,6 @@
 package ang.mois.pc.controller;
 
+import ang.mois.pc.util.TestDataProvider;
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
 import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.dto.response.PcTypeResponseDto;
@@ -13,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,28 +38,15 @@ class PcTypeControllerTest {
     @MockitoBean
     private PcTypeService pcTypeService;
 
-    private PcTypeRequestDto validDto;
+    private PcTypeRequestDto requestDto;
     private PcTypeResponseDto responseDto;
 
     private final String apiPath = "/computerConfig";
 
     @BeforeEach
     void setUp() {
-        validDto = new PcTypeRequestDto(
-                "Gaming PC",
-                "Intel i9",
-                "32GB",
-                "RTX 4090"
-        );
-
-        responseDto = new PcTypeResponseDto(
-                1L,
-                "Gaming PC",
-                "Intel i9",
-                "32GB",
-                "RTX 4090",
-                LocalDateTime.now()
-        );
+        requestDto = TestDataProvider.getPcTypeRequestDto();
+        responseDto = TestDataProvider.getPcTypeResponseDto();
     }
 
     // --- GET /computerConfig ---
@@ -91,7 +78,7 @@ class PcTypeControllerTest {
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validDto)))
+                        .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated());
 
         verify(pcTypeService, times(1)).save(any(PcTypeRequestDto.class));
