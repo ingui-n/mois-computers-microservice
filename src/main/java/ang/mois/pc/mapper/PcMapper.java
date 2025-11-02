@@ -14,14 +14,9 @@ public interface PcMapper {
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())") // set automatically
     Pc toEntity(PcRequestDto dto);
 
-    // Request: to Dto
-    PcRequestDto toDto(Pc entity);
-    List<PcRequestDto> toDtoList(List<Pc> entities);
-
     // Update: merge non-null fields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(PcRequestDto dto, @MappingTarget Pc entity);
-
 
     // Response: Entity - Response DTO with flattened FK
     @Mapping(target = "computerRoomId", source = "room.id")
