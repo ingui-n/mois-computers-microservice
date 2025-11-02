@@ -1,6 +1,6 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.PcTypeDto;
+import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.service.PcTypeService;
 import ang.mois.pc.validation.ValidationGroups;
@@ -33,7 +33,7 @@ public class PcTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<PcType> addType(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcTypeDto type) {
+    public ResponseEntity<PcType> addType(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcTypeRequestDto type) {
         PcType saved = pcTypeService.save(type);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -45,7 +45,7 @@ public class PcTypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PcType> updatePcType(@PathVariable Long id, @Validated @RequestBody PcTypeDto pcType) {
+    public ResponseEntity<PcType> updatePcType(@PathVariable Long id, @Validated @RequestBody PcTypeRequestDto pcType) {
         PcType updated = pcTypeService.update(id, pcType);
         return ResponseEntity.ok(updated);
     }

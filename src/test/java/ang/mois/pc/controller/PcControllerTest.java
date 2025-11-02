@@ -1,7 +1,7 @@
 package ang.mois.pc.controller;
 
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
-import ang.mois.pc.dto.PcDto;
+import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
@@ -38,14 +38,14 @@ public class PcControllerTest {
     @MockitoBean
     private RoomService roomService;
 
-    private PcDto validDto;
+    private PcRequestDto validDto;
     private Pc pcEntity;
     private Room roomEntity;
     private final String apiPath = "/computer";
 
     @BeforeEach
     void setUp() {
-        validDto = new PcDto(
+        validDto = new PcRequestDto(
                 "Gaming Pc - Best one",
                 Boolean.TRUE,
                 1L,
@@ -58,19 +58,19 @@ public class PcControllerTest {
     /* POST /computer tests */
     @Test
     void addValid() throws Exception {
-        when(pcService.save(any(PcDto.class))).thenReturn(pcEntity);
+        when(pcService.save(any(PcRequestDto.class))).thenReturn(pcEntity);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isCreated());
 
-        verify(pcService, times(1)).save(any(PcDto.class));
+        verify(pcService, times(1)).save(any(PcRequestDto.class));
     }
 
     @Test
     void addInvalidPc_BlankName() throws Exception {
-        PcDto invalidDto = new PcDto(
+        PcRequestDto invalidDto = new PcRequestDto(
                 "", // blank name
                 Boolean.TRUE,
                 1L,
@@ -83,12 +83,12 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name is mandatory"));
 
-        verify(pcService, never()).save(any(PcDto.class));
+        verify(pcService, never()).save(any(PcRequestDto.class));
     }
 
     @Test
     void addInvalidPc_NullAvailability() throws Exception {
-        PcDto invalidDto = new PcDto(
+        PcRequestDto invalidDto = new PcRequestDto(
                 "Some Pc",
                 null, // null availability
                 1L,
@@ -101,12 +101,12 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.available").value("Available is mandatory"));
 
-        verify(pcService, never()).save(any(PcDto.class));
+        verify(pcService, never()).save(any(PcRequestDto.class));
     }
 
     @Test
     void addInvalidPc_NullRoomId() throws Exception {
-        PcDto invalidDto = new PcDto(
+        PcRequestDto invalidDto = new PcRequestDto(
                 "Pc Name",
                 Boolean.TRUE,
                 null, // null room id
@@ -119,14 +119,14 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.computerRoomId").value("Computer Room Id is mandatory"));
 
-        verify(pcService, never()).save(any(PcDto.class));
+        verify(pcService, never()).save(any(PcRequestDto.class));
     }
 
     /* PUT /computer/{id} tests */
     @Test
     void updateValid() throws Exception {
-        when(pcService.update(eq(1L), any(PcDto.class))).thenReturn(pcEntity);
-        PcDto partialDto = new PcDto(
+        when(pcService.update(eq(1L), any(PcRequestDto.class))).thenReturn(pcEntity);
+        PcRequestDto partialDto = new PcRequestDto(
                 "Updated Pc Name",
                 Boolean.FALSE,
                 null,
@@ -138,12 +138,12 @@ public class PcControllerTest {
                         .content(objectMapper.writeValueAsString(partialDto)))
                 .andExpect(status().isOk());
 
-        verify(pcService, times(1)).update(eq(1L), any(PcDto.class));
+        verify(pcService, times(1)).update(eq(1L), any(PcRequestDto.class));
     }
 
     @Test
     void updateInvalid_NameTooShort() throws Exception {
-        PcDto invalidPartialDto = new PcDto(
+        PcRequestDto invalidPartialDto = new PcRequestDto(
                 "-", // too short name
                 Boolean.FALSE,
                 null,
@@ -156,7 +156,7 @@ public class PcControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name must be between 2 and 100 characters"));
 
-        verify(pcService, never()).update(eq(1L), any(PcDto.class));
+        verify(pcService, never()).update(eq(1L), any(PcRequestDto.class));
     }
 
     /* GET /computer tests */

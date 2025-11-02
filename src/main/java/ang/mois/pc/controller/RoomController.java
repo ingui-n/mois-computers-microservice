@@ -1,6 +1,6 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.RoomDto;
+import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.FacultyService;
@@ -44,8 +44,8 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<Room> addRoom(@Validated(ValidationGroups.OnCreate.class) @RequestBody RoomDto roomDto) {
-        Room saved = roomService.save(roomDto);
+    public ResponseEntity<Room> addRoom(@Validated(ValidationGroups.OnCreate.class) @RequestBody RoomRequestDto roomRequestDto) {
+        Room saved = roomService.save(roomRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
@@ -56,8 +56,8 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @Validated @RequestBody RoomDto roomDto) {
-        Room updated = roomService.update(id, roomDto);
+    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @Validated @RequestBody RoomRequestDto roomRequestDto) {
+        Room updated = roomService.update(id, roomRequestDto);
         return ResponseEntity.ok(updated);
     }
 }

@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.PcTypeDto;
+import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.entity.PcType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +15,11 @@ class PcTypeServiceTest {
     @Autowired
     private PcTypeService pcTypeService;
 
-    private PcTypeDto validDto;
+    private PcTypeRequestDto validDto;
 
     @BeforeEach
     void setUp() {
-        validDto = new PcTypeDto(
+        validDto = new PcTypeRequestDto(
                 "Gaming PC",
                 "Intel i7",
                 "16GB",
@@ -45,7 +45,7 @@ class PcTypeServiceTest {
     void update() {
         PcType type = pcTypeService.save(validDto);
 
-        PcTypeDto updateDto = new PcTypeDto(
+        PcTypeRequestDto updateDto = new PcTypeRequestDto(
                 "Office PC",
                 null,
                 "8GB",
@@ -53,7 +53,7 @@ class PcTypeServiceTest {
         );
 
         PcType updated = pcTypeService.update(type.getId(), updateDto);
-        PcTypeDto merged = new PcTypeDto(
+        PcTypeRequestDto merged = new PcTypeRequestDto(
                 "Office PC",
                 "Intel i7",
                 "8GB",
@@ -81,7 +81,7 @@ class PcTypeServiceTest {
         assertTrue(ex.getMessage().contains("does not exist"));
     }
 
-    private void verifyParams(PcType type, PcTypeDto dto) {
+    private void verifyParams(PcType type, PcTypeRequestDto dto) {
         assertEquals(dto.name(), type.getName());
         assertEquals(dto.cpu(), type.getCpu());
         assertEquals(dto.ram(), type.getRam());

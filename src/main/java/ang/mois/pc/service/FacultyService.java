@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.FacultyDto;
+import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.mapper.FacultyMapper;
 import ang.mois.pc.repository.FacultyRepository;
@@ -27,8 +27,8 @@ public class FacultyService {
         return facultyRepository.findAll();
     }
 
-    public Faculty save(FacultyDto facultyDto) {
-        Faculty faculty = facultyMapper.toEntity(facultyDto);
+    public Faculty save(FacultyRequestDto facultyRequestDto) {
+        Faculty faculty = facultyMapper.toEntity(facultyRequestDto);
         return facultyRepository.save(faculty);
     }
 
@@ -37,10 +37,10 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-    public Faculty update(Long id, FacultyDto facultyDto) {
+    public Faculty update(Long id, FacultyRequestDto facultyRequestDto) {
         Faculty faculty = getById(id);
         // merge entities - basically copy non-null values to existing faculty
-        facultyMapper.updateEntityFromDto(facultyDto, faculty);
+        facultyMapper.updateEntityFromDto(facultyRequestDto, faculty);
 
         return facultyRepository.save(faculty);
     }

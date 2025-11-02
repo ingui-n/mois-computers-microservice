@@ -1,6 +1,6 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.PcDto;
+import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.PcService;
@@ -47,14 +47,14 @@ public class PcController {
     }
 
     @PostMapping
-    public ResponseEntity<Pc> addPc(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcDto pcDto) {
-        Pc saved = pcService.save(pcDto);
+    public ResponseEntity<Pc> addPc(@Validated(ValidationGroups.OnCreate.class) @RequestBody PcRequestDto pcRequestDto) {
+        Pc saved = pcService.save(pcRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pc> updatePc(@PathVariable Long id, @Validated @RequestBody PcDto pcDto) {
-        Pc updated = pcService.update(id, pcDto);
+    public ResponseEntity<Pc> updatePc(@PathVariable Long id, @Validated @RequestBody PcRequestDto pcRequestDto) {
+        Pc updated = pcService.update(id, pcRequestDto);
         return ResponseEntity.ok(updated);
     }
 

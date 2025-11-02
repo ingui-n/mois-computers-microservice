@@ -1,7 +1,7 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.FacultyDto;
-import ang.mois.pc.dto.RoomDto;
+import ang.mois.pc.dto.request.FacultyRequestDto;
+import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,12 +24,12 @@ class RoomServiceTest {
     private FacultyService facultyService;
 
     private Faculty faculty;
-    private RoomDto validDto;
+    private RoomRequestDto validDto;
 
     @BeforeEach
     void setUp() {
         // Create and store a faculty to attach to the room
-        faculty = facultyService.save(new FacultyDto(
+        faculty = facultyService.save(new FacultyRequestDto(
                 "Faculty of Informatics",
                 "FI",
                 Time.valueOf("08:00:00"),
@@ -39,7 +39,7 @@ class RoomServiceTest {
                 180
         ));
 
-        validDto = new RoomDto(
+        validDto = new RoomRequestDto(
                 "Room A",
                 faculty.getId()
         );
@@ -63,14 +63,14 @@ class RoomServiceTest {
     void update() {
         Room saved = roomService.save(validDto);
 
-        RoomDto updateDto = new RoomDto(
+        RoomRequestDto updateDto = new RoomRequestDto(
                 "Updated Room",
                 null
         );
 
         Room updated = roomService.update(saved.getId(), updateDto);
 
-        RoomDto expected = new RoomDto(
+        RoomRequestDto expected = new RoomRequestDto(
                 "Updated Room",
                 faculty.getId()
         );
@@ -95,7 +95,7 @@ class RoomServiceTest {
         assertTrue(ex.getMessage().contains("does not exist"));
     }
 
-    private void verifyParams(Room room, RoomDto dto) {
+    private void verifyParams(Room room, RoomRequestDto dto) {
         assertEquals(dto.name(), room.getName());
         assertEquals(dto.facultyId(), room.getFaculty().getId());
         assertEquals(LocalDate.now(), room.getCreatedAt().toLocalDate());

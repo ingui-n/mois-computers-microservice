@@ -1,7 +1,7 @@
 package ang.mois.pc.controller;
 
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
-import ang.mois.pc.dto.PcTypeDto;
+import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.service.PcTypeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,14 +37,14 @@ class PcTypeControllerTest {
     @MockitoBean
     private PcTypeService pcTypeService;
 
-    private PcTypeDto validDto;
+    private PcTypeRequestDto validDto;
     private PcType entity;
 
     private final String apiPath = "/computerConfig";
 
     @BeforeEach
     void setUp() {
-        validDto = new PcTypeDto(
+        validDto = new PcTypeRequestDto(
                 "Gaming PC",
                 "Intel i9",
                 "32GB",
@@ -79,19 +79,19 @@ class PcTypeControllerTest {
     // --- POST /computerConfig ---
     @Test
     void addValidPcType() throws Exception {
-        when(pcTypeService.save(any(PcTypeDto.class))).thenReturn(entity);
+        when(pcTypeService.save(any(PcTypeRequestDto.class))).thenReturn(entity);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isCreated());
 
-        verify(pcTypeService, times(1)).save(any(PcTypeDto.class));
+        verify(pcTypeService, times(1)).save(any(PcTypeRequestDto.class));
     }
 
     @Test
     void addInvalidPcType_BlankName() throws Exception {
-        PcTypeDto invalidDto = new PcTypeDto(
+        PcTypeRequestDto invalidDto = new PcTypeRequestDto(
                 "", // Invalid name
                 "Intel i9",
                 "32GB",
@@ -104,12 +104,12 @@ class PcTypeControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name is mandatory"));
 
-        verify(pcTypeService, never()).save(any(PcTypeDto.class));
+        verify(pcTypeService, never()).save(any(PcTypeRequestDto.class));
     }
 
     @Test
     void addInvalidPcType_BlankCpu() throws Exception {
-        PcTypeDto invalidDto = new PcTypeDto(
+        PcTypeRequestDto invalidDto = new PcTypeRequestDto(
                 "Gaming PC",
                 "", // Invalid CPU
                 "32GB",
@@ -122,32 +122,32 @@ class PcTypeControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.cpu").value("Cpu is mandatory"));
 
-        verify(pcTypeService, never()).save(any(PcTypeDto.class));
+        verify(pcTypeService, never()).save(any(PcTypeRequestDto.class));
     }
 
     // --- PUT /computerConfig/{id} ---
     @Test
     void updatePcType_Valid() throws Exception {
-        PcTypeDto updateDto = new PcTypeDto(
+        PcTypeRequestDto updateDto = new PcTypeRequestDto(
                 "Updated PC",
                 "AMD Ryzen 9",
                 "64GB",
                 "RTX 4080"
         );
 
-        when(pcTypeService.update(eq(1L), any(PcTypeDto.class))).thenReturn(entity);
+        when(pcTypeService.update(eq(1L), any(PcTypeRequestDto.class))).thenReturn(entity);
 
         mockMvc.perform(put(apiPath + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk());
 
-        verify(pcTypeService, times(1)).update(eq(1L), any(PcTypeDto.class));
+        verify(pcTypeService, times(1)).update(eq(1L), any(PcTypeRequestDto.class));
     }
 
     @Test
     void updatePcType_InvalidNameTooShort() throws Exception {
-        PcTypeDto invalidDto = new PcTypeDto(
+        PcTypeRequestDto invalidDto = new PcTypeRequestDto(
                 "A", // Too short (min=2)
                 "Intel i9",
                 "32GB",
@@ -160,7 +160,7 @@ class PcTypeControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name must be between 2 and 100 characters"));
 
-        verify(pcTypeService, never()).update(anyLong(), any(PcTypeDto.class));
+        verify(pcTypeService, never()).update(anyLong(), any(PcTypeRequestDto.class));
     }
 
     // --- DELETE /computerConfig/{id} ---

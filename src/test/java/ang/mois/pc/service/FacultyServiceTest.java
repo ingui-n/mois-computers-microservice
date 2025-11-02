@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.FacultyDto;
+import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.entity.Faculty;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,12 +17,12 @@ class FacultyServiceTest {
     @Autowired
     private FacultyService facultyService;
 
-    private FacultyDto validDto;
+    private FacultyRequestDto validDto;
 
     @BeforeEach
     void setUp() {
         // A helper to create a fully valid DTO
-        validDto = new FacultyDto(
+        validDto = new FacultyRequestDto(
                 "Faculty of Informatics",
                 "FI",
                 Time.valueOf("08:00:00"),
@@ -57,12 +57,12 @@ class FacultyServiceTest {
         Faculty faculty = facultyService.save(validDto);
 
         // prepare dto
-        FacultyDto updateDto = new FacultyDto("New Name",
+        FacultyRequestDto updateDto = new FacultyRequestDto("New Name",
                 null, null, null,
                 null, null, null);
 
         Faculty updated = facultyService.update(faculty.getId(), updateDto);
-        FacultyDto mergedDto = new FacultyDto(
+        FacultyRequestDto mergedDto = new FacultyRequestDto(
                 "New Name",
                 "FI",
                 Time.valueOf("08:00:00"),
@@ -74,7 +74,7 @@ class FacultyServiceTest {
         verifyParams(updated, mergedDto);
     }
 
-    private void verifyParams(Faculty faculty, FacultyDto dto) {
+    private void verifyParams(Faculty faculty, FacultyRequestDto dto) {
         assertEquals(faculty.getName(), dto.name());
         assertEquals(faculty.getShortcut(), dto.shortcut());
         assertEquals(faculty.getReservationTimeStart(), dto.reservationTimeStart());

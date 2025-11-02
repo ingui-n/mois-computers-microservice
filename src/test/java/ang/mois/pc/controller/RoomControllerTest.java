@@ -1,7 +1,7 @@
 package ang.mois.pc.controller;
 
 import ang.mois.pc.controller.exception.GlobalExceptionHandler;
-import ang.mois.pc.dto.RoomDto;
+import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.service.FacultyService;
@@ -38,14 +38,14 @@ public class RoomControllerTest {
     @MockitoBean
     private FacultyService facultyService;
 
-    private RoomDto validDto;
+    private RoomRequestDto validDto;
     private Room roomEntity;
     private Faculty faculty;
     private final String apiPath = "/computerRoom";
 
     @BeforeEach
     void setUp() {
-        validDto = new RoomDto(
+        validDto = new RoomRequestDto(
                 "Main Lab",
                 1L
         );
@@ -57,19 +57,19 @@ public class RoomControllerTest {
     /* POST /computerRoom tests */
     @Test
     void addValid() throws Exception {
-        when(roomService.save(any(RoomDto.class))).thenReturn(roomEntity);
+        when(roomService.save(any(RoomRequestDto.class))).thenReturn(roomEntity);
 
         mockMvc.perform(post(apiPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isCreated());
 
-        verify(roomService, times(1)).save(any(RoomDto.class));
+        verify(roomService, times(1)).save(any(RoomRequestDto.class));
     }
 
     @Test
     void addInvalid_BlankName() throws Exception {
-        RoomDto invalidDto = new RoomDto(
+        RoomRequestDto invalidDto = new RoomRequestDto(
                 "", // blank name
                 1L
         );
@@ -80,12 +80,12 @@ public class RoomControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name is mandatory"));
 
-        verify(roomService, never()).save(any(RoomDto.class));
+        verify(roomService, never()).save(any(RoomRequestDto.class));
     }
 
     @Test
     void addInvalid_NullFacultyId() throws Exception {
-        RoomDto invalidDto = new RoomDto(
+        RoomRequestDto invalidDto = new RoomRequestDto(
                 "Main Lab",
                 null // missing facultyId
         );
@@ -96,14 +96,14 @@ public class RoomControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.facultyId").value("Faculty Id is mandatory"));
 
-        verify(roomService, never()).save(any(RoomDto.class));
+        verify(roomService, never()).save(any(RoomRequestDto.class));
     }
 
     /* PUT /computerRoom/{id} tests */
     @Test
     void updateValid() throws Exception {
-        when(roomService.update(eq(1L), any(RoomDto.class))).thenReturn(roomEntity);
-        RoomDto partialDto = new RoomDto(
+        when(roomService.update(eq(1L), any(RoomRequestDto.class))).thenReturn(roomEntity);
+        RoomRequestDto partialDto = new RoomRequestDto(
                 "Updated Lab",
                 null // allowed null on update
         );
@@ -113,12 +113,12 @@ public class RoomControllerTest {
                         .content(objectMapper.writeValueAsString(partialDto)))
                 .andExpect(status().isOk());
 
-        verify(roomService, times(1)).update(eq(1L), any(RoomDto.class));
+        verify(roomService, times(1)).update(eq(1L), any(RoomRequestDto.class));
     }
 
     @Test
     void updateInvalid_NameTooShort() throws Exception {
-        RoomDto invalidPartialDto = new RoomDto(
+        RoomRequestDto invalidPartialDto = new RoomRequestDto(
                 "-", // too short
                 null
         );
@@ -129,7 +129,7 @@ public class RoomControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").value("Name must be between 2 and 100 characters"));
 
-        verify(roomService, never()).update(eq(1L), any(RoomDto.class));
+        verify(roomService, never()).update(eq(1L), any(RoomRequestDto.class));
     }
 
     /* GET /computerRoom and /computerRoom?facultyId= tests */

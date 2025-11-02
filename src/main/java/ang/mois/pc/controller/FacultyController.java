@@ -1,6 +1,6 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.FacultyDto;
+import ang.mois.pc.dto.request.FacultyRequestDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.service.FacultyService;
 import ang.mois.pc.validation.ValidationGroups;
@@ -31,13 +31,13 @@ public class FacultyController {
     }
 
     @PostMapping
-    public ResponseEntity<Faculty> addFaculty(@Validated(ValidationGroups.OnCreate.class) @RequestBody FacultyDto facultyDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(facultyService.save(facultyDto));
+    public ResponseEntity<Faculty> addFaculty(@Validated(ValidationGroups.OnCreate.class) @RequestBody FacultyRequestDto facultyRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(facultyService.save(facultyRequestDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @Validated @RequestBody FacultyDto facultyDto) {
-        return ResponseEntity.ok(facultyService.update(id, facultyDto));
+    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @Validated @RequestBody FacultyRequestDto facultyRequestDto) {
+        return ResponseEntity.ok(facultyService.update(id, facultyRequestDto));
     }
 
     @DeleteMapping("/{id}")

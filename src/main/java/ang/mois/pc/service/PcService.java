@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.PcDto;
+import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
@@ -38,13 +38,13 @@ public class PcService {
                 .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
     }
 
-    public Pc save(PcDto pcDto) {
+    public Pc save(PcRequestDto pcRequestDto) {
         // retrieve foreign key entities and verify relation
-        Room room = getRoom(pcDto.computerRoomId());
-        PcType type = getType(pcDto.configId());
+        Room room = getRoom(pcRequestDto.computerRoomId());
+        PcType type = getType(pcRequestDto.configId());
 
         // map basic properties
-        Pc pc = pcMapper.toEntity(pcDto);
+        Pc pc = pcMapper.toEntity(pcRequestDto);
 
         // set FK entities
         pc.setRoom(room);
@@ -53,20 +53,20 @@ public class PcService {
         return pcRepository.save(pc);
     }
 
-    public Pc update(Long id, PcDto updatePcDto) {
+    public Pc update(Long id, PcRequestDto updatePcRequestDto) {
         Pc pc = getById(id);
         // verify foreign key relations
-        if(updatePcDto.computerRoomId() != null) {
-            Room room = getRoom(updatePcDto.computerRoomId());
+        if(updatePcRequestDto.computerRoomId() != null) {
+            Room room = getRoom(updatePcRequestDto.computerRoomId());
             pc.setRoom(room);
         }
 
-        if(updatePcDto.configId() != null) {
-            PcType type = getType(updatePcDto.configId());
+        if(updatePcRequestDto.configId() != null) {
+            PcType type = getType(updatePcRequestDto.configId());
             pc.setPcType(type);
         }
         // merge entities
-        pcMapper.updateEntityFromDto(updatePcDto, pc);
+        pcMapper.updateEntityFromDto(updatePcRequestDto, pc);
 
         return pcRepository.save(pc);
     }

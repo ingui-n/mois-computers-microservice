@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.RoomDto;
+import ang.mois.pc.dto.request.RoomRequestDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Room;
 import ang.mois.pc.repository.RoomRepository;
@@ -31,9 +31,9 @@ public class RoomService {
         return roomRepository.findByFaculty(faculty);
     }
 
-    public Room save(RoomDto createRoomDto) {
-        Faculty faculty = facultyService.getById(createRoomDto.facultyId());
-        Room room = new Room(createRoomDto.name(), faculty);
+    public Room save(RoomRequestDto createRoomRequestDto) {
+        Faculty faculty = facultyService.getById(createRoomRequestDto.facultyId());
+        Room room = new Room(createRoomRequestDto.name(), faculty);
         return roomRepository.save(room);
     }
 
@@ -41,9 +41,9 @@ public class RoomService {
         roomRepository.deleteById(id);
     }
 
-    public Room update(Long idR, RoomDto roomDto) {
+    public Room update(Long idR, RoomRequestDto roomRequestDto) {
         Room room = getById(idR);
-        if (roomDto.name() != null) room.setName(roomDto.name());
+        if (roomRequestDto.name() != null) room.setName(roomRequestDto.name());
         return roomRepository.save(room);
     }
 }

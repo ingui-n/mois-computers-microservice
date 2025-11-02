@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.PcDto;
+import ang.mois.pc.dto.request.PcRequestDto;
 import ang.mois.pc.entity.Faculty;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
@@ -36,7 +36,7 @@ class PcServiceTest {
     @Autowired
     private PcRepository pcRepository;
 
-    private PcDto validDto;
+    private PcRequestDto validDto;
     private Room savedRoom;
     private Faculty savedFaculty;
     private PcType savedType;
@@ -59,7 +59,7 @@ class PcServiceTest {
         savedType.setGpu("RTX 4080");
         savedType = pcTypeRepository.save(savedType);
 
-        validDto = new PcDto(
+        validDto = new PcRequestDto(
                 "High-End PC",
                 Boolean.TRUE,
                 savedRoom.getId(),
@@ -95,7 +95,7 @@ class PcServiceTest {
         Pc pc = pcService.save(validDto);
 
         // prepare a DTO that updates the name and sets availability false
-        PcDto updateDto = new PcDto(
+        PcRequestDto updateDto = new PcRequestDto(
                 "Updated Name",
                 Boolean.FALSE,
                 null, // keep old room
@@ -127,7 +127,7 @@ class PcServiceTest {
         newType.setGpu("GTX 1650");
         newType = pcTypeRepository.save(newType);
 
-        PcDto updateDto = new PcDto(
+        PcRequestDto updateDto = new PcRequestDto(
                 "Moved PC",
                 Boolean.TRUE,
                 newRoom.getId(),
@@ -174,7 +174,7 @@ class PcServiceTest {
 
     @Test
     void save_invalidRoom_shouldThrow() {
-        PcDto dto = new PcDto(
+        PcRequestDto dto = new PcRequestDto(
                 "Bad PC",
                 Boolean.TRUE,
                 9999L, // nonexistent room
@@ -185,7 +185,7 @@ class PcServiceTest {
 
     @Test
     void save_invalidType_shouldThrow() {
-        PcDto dto = new PcDto(
+        PcRequestDto dto = new PcRequestDto(
                 "Bad PC",
                 Boolean.TRUE,
                 savedRoom.getId(),

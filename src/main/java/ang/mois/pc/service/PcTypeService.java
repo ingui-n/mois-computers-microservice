@@ -1,6 +1,6 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.PcTypeDto;
+import ang.mois.pc.dto.request.PcTypeRequestDto;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.repository.PcTypeRepository;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class PcTypeService {
                 .orElseThrow(() -> new IllegalArgumentException("PcType with id " + typeId + " does not exist"));
     }
 
-    public PcType save(PcTypeDto type) {
+    public PcType save(PcTypeRequestDto type) {
         PcType pcType = new PcType(
                 type.name(),
                 type.cpu(),
@@ -37,7 +37,7 @@ public class PcTypeService {
         pcTypeRepository.deleteById(typeId);
     }
 
-    public PcType update(Long id, PcTypeDto pcType) {
+    public PcType update(Long id, PcTypeRequestDto pcType) {
         PcType type = getById(id);
         if (pcType.name() != null) type.setName(pcType.name());
         if (pcType.cpu() != null) type.setCpu(pcType.cpu());
