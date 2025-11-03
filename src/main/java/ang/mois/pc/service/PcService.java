@@ -1,10 +1,12 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.CreatePcDto;
-import ang.mois.pc.dto.UpdatePcDto;
+import ang.mois.pc.dto.request.PcRequestDto;
+import ang.mois.pc.dto.response.PcResponseDto;
+import ang.mois.pc.dto.response.PcUnwrappedResponseDto;
 import ang.mois.pc.entity.Pc;
 import ang.mois.pc.entity.PcType;
 import ang.mois.pc.entity.Room;
+import ang.mois.pc.mapper.PcMapper;
 import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import ang.mois.pc.repository.RoomRepository;
@@ -19,78 +21,93 @@ public class PcService {
     private final PcRepository pcRepository;
     private final RoomRepository roomRepository;
     private final PcTypeRepository pcTypeRepository;
+    private final PcMapper pcMapper;
 
     @Autowired
-    public PcService(PcRepository pcRepository, RoomRepository roomRepository, PcTypeRepository pcTypeRepository) {
+    public PcService(PcRepository pcRepository, RoomRepository roomRepository, PcTypeRepository pcTypeRepository, PcMapper pcMapper) {
         this.pcRepository = pcRepository;
         this.roomRepository = roomRepository;
         this.pcTypeRepository = pcTypeRepository;
+        this.pcMapper = pcMapper;
     }
 
-    public List<Pc> getAll() {
-        return pcRepository.findAll();
+    public List<PcResponseDto> getAll() {
+        return pcMapper.toResponseDtoList(pcRepository.findAll());
     }
 
-    public Pc getById(Long id) {
-        return pcRepository.findById(id)
-                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
+    public PcResponseDto getById(Long id) {
+        Pc pc = getPc(id);
+        return pcMapper.toResponseDto(pc);
     }
 
-    public Pc save(CreatePcDto createPcDto) {
-        Optional<Room> room = roomRepository.findById(createPcDto.computerRoomId());
+    public PcUnwrappedResponseDto getByIdUnwrapped(Long id) {
+        Pc pc = getPc(id);
+        return pcMapper.toUnwrappedResponseDto(pc);
+    }
+
+    public PcResponseDto save(PcRequestDto pcRequestDto) {
+        // retrieve foreign key entities and verify relation
+        Room room = getRoom(pcRequestDto.computerRoomId());
+        PcType type = getType(pcRequestDto.configId());
+
+        // map basic properties
+        Pc pc = pcMapper.toEntity(pcRequestDto);
+
+        // set FK entities
+        pc.setRoom(room);
+        pc.setPcType(type);
+
+        return pcMapper.toResponseDto(pcRepository.save(pc));
+    }
+
+    public PcResponseDto update(Long id, PcRequestDto updatePcRequestDto) {
+        Pc pc = getPc(id);
+        // verify foreign key relations
+        if(updatePcRequestDto.computerRoomId() != null) {
+            Room room = getRoom(updatePcRequestDto.computerRoomId());
+            pc.setRoom(room);
+        }
+
+        if(updatePcRequestDto.configId() != null) {
+            PcType type = getType(updatePcRequestDto.configId());
+            pc.setPcType(type);
+        }
+        // merge entities
+        pcMapper.updateEntityFromDto(updatePcRequestDto, pc);
+
+        return pcMapper.toResponseDto(pcRepository.save(pc));
+    }
+
+    private Room getRoom(Long roomId) {
+        Optional<Room> room = roomRepository.findById(roomId);
         if(room.isEmpty()){
-            throw new IllegalArgumentException("Room with id " + createPcDto.computerRoomId() + " does not exist");
+            throw new IllegalArgumentException("Room with id " + roomId + " does not exist");
         }
-
-        Optional<PcType> type = pcTypeRepository.findById(createPcDto.configId());
-        if(type.isEmpty()){
-            throw new IllegalArgumentException("PcType with id " + createPcDto.configId() + " does not exist");
-        }
-
-        Pc pc = new Pc(
-            createPcDto.name(),
-            createPcDto.available(),
-            room.get(),
-            type.get()
-        );
-
-        return pcRepository.save(pc);
+        return room.get();
     }
 
-    public Pc update(Long id, UpdatePcDto updatePcDto) {
-        Pc pc = getById(id);
-        // merge etities
-        if(updatePcDto.name() != null) pc.setName(updatePcDto.name());
-        if(updatePcDto.available() != null) pc.setAvailable(updatePcDto.available());
-
-        if(updatePcDto.computerRoomId() != null) {
-            Optional<Room> room = roomRepository.findById(updatePcDto.computerRoomId());
-            if(room.isEmpty()){
-                throw new IllegalArgumentException("Room with id " + updatePcDto.computerRoomId() + " does not exist");
-            }
-            pc.setRoom(room.get());
+    private PcType getType(Long typeId) {
+        Optional<PcType> type = pcTypeRepository.findById(typeId);
+        if(type.isEmpty()){
+            throw new IllegalArgumentException("PcType with id " + typeId + " does not exist");
         }
-
-        if(updatePcDto.configId() != null) {
-            Optional<PcType> type = pcTypeRepository.findById(updatePcDto.configId());
-            if(type.isEmpty()){
-                throw new IllegalArgumentException("PcType with id " + updatePcDto.configId() + " does not exist");
-            }
-            pc.setPcType(type.get());
-        }
-
-        return pcRepository.save(pc);
+        return type.get();
     }
 
     public void delete(Long id) {
         pcRepository.deleteById(id);
     }
 
-    public List<Pc> getByRoom(Room room) {
-        return pcRepository.findByRoom(room);
+    public List<PcResponseDto> getByRoom(Long roomId) {
+        return pcMapper.toResponseDtoList(pcRepository.findByRoomId(roomId));
     }
 
-    public List<Pc> getByType(PcType type) {
-        return pcRepository.findByPcType(type);
+    public List<PcResponseDto> getByType(PcType type) {
+        return pcMapper.toResponseDtoList(pcRepository.findByPcType(type));
+    }
+
+    private Pc getPc(Long id) {
+        return pcRepository.findById(id)
+                .orElseThrow(() ->new IllegalArgumentException("Pc with id " + id + " does not exist"));
     }
 }

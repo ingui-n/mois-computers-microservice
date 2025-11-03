@@ -1,7 +1,10 @@
 package ang.mois.pc.service;
 
-import ang.mois.pc.dto.PcTypeDto;
+import ang.mois.pc.dto.request.PcTypeRequestDto;
+import ang.mois.pc.dto.response.PcTypeResponseDto;
 import ang.mois.pc.entity.PcType;
+import ang.mois.pc.mapper.PcTypeMapper;
+import ang.mois.pc.repository.PcRepository;
 import ang.mois.pc.repository.PcTypeRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,39 +13,55 @@ import java.util.List;
 @Service
 public class PcTypeService {
     private final PcTypeRepository pcTypeRepository;
+    private final PcRepository pcRepository;
+    private final PcTypeMapper pcTypeMapper;
 
-    public PcTypeService(PcTypeRepository pcTypeRepository) {
+    public PcTypeService(PcTypeRepository pcTypeRepository, PcRepository pcRepository, PcTypeMapper pcTypeMapper) {
         this.pcTypeRepository = pcTypeRepository;
+        this.pcRepository = pcRepository;
+        this.pcTypeMapper = pcTypeMapper;
     }
 
-    public List<PcType> getAll() {
-        return pcTypeRepository.findAll();
-    }
-    public PcType getById(Long typeId) {
-        return pcTypeRepository.findById(typeId)
-                .orElseThrow(() -> new IllegalArgumentException("PcType with id " + typeId + " does not exist"));
+    public List<PcTypeResponseDto> getAll() {
+        return pcTypeMapper.toResponseDtoList(pcTypeRepository.findAll());
     }
 
-    public PcType save(PcTypeDto type) {
-        PcType pcType = new PcType(
-                type.name(),
-                type.cpu(),
-                type.ram(),
-                type.gpu()
-        );
-        return pcTypeRepository.save(pcType);
+    public PcTypeResponseDto getById(Long typeId) {
+        PcType type = getPcType(typeId);
+        return pcTypeMapper.toResponseDto(type);
+    }
+
+    public PcTypeResponseDto save(PcTypeRequestDto type) {
+        PcType pcType = pcTypeMapper.toEntity(type);
+        return pcTypeMapper.toResponseDto(pcTypeRepository.save(pcType));
     }
 
     public void delete(Long typeId) {
+        // check if type exists
+        if(!pcTypeRepository.existsById(typeId)) {
+            throw new IllegalArgumentException("PcType with id " + typeId + " does not exist");
+        }
+
+        // delete if no computer references this type?
+        if(pcRepository.existsByPcTypeId(typeId)) {
+            throw new FKConflictException(
+                    "Cannot delete PcType with id: " + " , because there are still computers associated with it."
+            );
+        }
         pcTypeRepository.deleteById(typeId);
     }
 
-    public PcType update(Long id, PcTypeDto pcType) {
-        PcType type = getById(id);
-        if (pcType.name() != null) type.setName(pcType.name());
-        if (pcType.cpu() != null) type.setCpu(pcType.cpu());
-        if (pcType.ram() != null) type.setRam(pcType.ram());
-        if (pcType.gpu() != null) type.setGpu(pcType.gpu());
-        return pcTypeRepository.save(type);
+    public PcTypeResponseDto update(Long id, PcTypeRequestDto pcTypeDto) {
+        PcType pcTypeEntity = getPcType(id);
+
+        // map by copying non-null values from update dto
+        pcTypeMapper.updateEntityFromDto(pcTypeDto, pcTypeEntity);
+
+        return pcTypeMapper.toResponseDto(pcTypeRepository.save(pcTypeEntity));
+    }
+
+    private PcType getPcType(Long id) {
+        return pcTypeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("PcType with id " + id + " does not exist"));
     }
 }

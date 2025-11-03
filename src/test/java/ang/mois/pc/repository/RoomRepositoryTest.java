@@ -50,8 +50,8 @@ class RoomRepositoryTest {
         Room r3 = new Room("R201", f2);
         roomRepository.saveAll(List.of(r1, r2, r3));
 
-        List<Room> fitRooms = roomRepository.findByFaculty(f1);
-        List<Room> lawRooms = roomRepository.findByFaculty(f2);
+        List<Room> fitRooms = roomRepository.findByFacultyId(f1.getId());
+        List<Room> lawRooms = roomRepository.findByFacultyId(f2.getId());
 
         assertThat(fitRooms).hasSize(2);
         assertThat(lawRooms).hasSize(1);

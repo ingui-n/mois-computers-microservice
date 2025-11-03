@@ -7,9 +7,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 @Repository
 public interface PcRepository extends JpaRepository<Pc, Long> {
-    List<Pc> findByRoom(Room room);
+    List<Pc> findByRoomId(Long roomId);
+
     List<Pc> findAllByRoomIn(List<Room> room);
+
     List<Pc> findByPcType(PcType type);
+
+    boolean existsByPcTypeId(Long typeId);
+
+    boolean existsByRoomId(Long roomId);
 }

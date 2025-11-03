@@ -53,8 +53,8 @@ class PcRepositoryTest {
         Pc pc1 = pcRepository.save(new Pc("ok", true, room1, type));
         Pc pc2 = pcRepository.save(new Pc("broken", false, room2, type));
 
-        List<Pc> pcsRoom1 = pcRepository.findByRoom(room1);
-        List<Pc> pcsRoom2 = pcRepository.findByRoom(room2);
+        List<Pc> pcsRoom1 = pcRepository.findByRoomId(room1.getId());
+        List<Pc> pcsRoom2 = pcRepository.findByRoomId(room2.getId());
 
         assertThat(pcsRoom1).containsExactly(pc1);
         assertThat(pcsRoom2).containsExactly(pc2);

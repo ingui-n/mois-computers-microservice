@@ -1,9 +1,12 @@
 package ang.mois.pc.controller;
 
-import ang.mois.pc.dto.FacultyDto;
-import ang.mois.pc.entity.Faculty;
+import ang.mois.pc.dto.request.FacultyRequestDto;
+import ang.mois.pc.dto.response.FacultyResponseDto;
 import ang.mois.pc.service.FacultyService;
+import ang.mois.pc.validation.ValidationGroups;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,23 +21,23 @@ public class FacultyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Faculty>> getAll() {
+    public ResponseEntity<List<FacultyResponseDto>> getAll() {
         return ResponseEntity.ok(facultyService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Faculty> getFaculty(@PathVariable Long id) {
+    public ResponseEntity<FacultyResponseDto> getFaculty(@PathVariable Long id) {
         return ResponseEntity.ok(facultyService.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Faculty> addFaculty(@RequestBody FacultyDto facultyDto) {
-        return ResponseEntity.status(201).body(facultyService.save(facultyDto));
+    public ResponseEntity<FacultyResponseDto> addFaculty(@Validated(ValidationGroups.OnCreate.class) @RequestBody FacultyRequestDto facultyRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(facultyService.save(facultyRequestDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @RequestBody FacultyDto facultyDto) {
-        return ResponseEntity.ok(facultyService.update(id, facultyDto));
+    public ResponseEntity<FacultyResponseDto> updateFaculty(@PathVariable Long id, @Validated @RequestBody FacultyRequestDto facultyRequestDto) {
+        return ResponseEntity.ok(facultyService.update(id, facultyRequestDto));
     }
 
     @DeleteMapping("/{id}")

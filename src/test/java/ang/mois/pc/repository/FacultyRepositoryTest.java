@@ -22,7 +22,7 @@ class FacultyRepositoryTest {
 
     @Test
     void testSaveAndFindById() {
-        Faculty faculty = new Faculty("Faculty of Science", "FS");
+        Faculty faculty = getFaculty("Faculty of Science", "FS");
         Faculty saved = facultyRepository.save(faculty);
 
         Optional<Faculty> found = facultyRepository.findById(saved.getId());
@@ -35,7 +35,7 @@ class FacultyRepositoryTest {
 
     @Test
     void testUpdateFaculty() {
-        Faculty faculty = new Faculty("Old Name", "Same");
+        Faculty faculty = getFaculty("Old Name", "Same");
         Faculty saved = facultyRepository.save(faculty);
 
         saved.setName("New Name");
@@ -48,7 +48,7 @@ class FacultyRepositoryTest {
 
     @Test
     void testDeleteFaculty() {
-        Faculty faculty = new Faculty("To Delete", "TD");
+        Faculty faculty = getFaculty("To Delete", "TD");
         Faculty saved = facultyRepository.save(faculty);
         assertThat(facultyRepository.findById(saved.getId())).isPresent();
 
@@ -61,7 +61,7 @@ class FacultyRepositoryTest {
     @Test
     @Transactional
     void testFacultyWithRooms() {
-        Faculty faculty = new Faculty("Faculty of IT", "FIT");
+        Faculty faculty = getFaculty("Faculty of IT", "FIT");
         Room room1 = new Room("R101", faculty);
         Room room2 = new Room("R102", faculty);
 
@@ -77,11 +77,15 @@ class FacultyRepositoryTest {
 
     @Test
     void testCreatedAtIsSet() {
-        Faculty faculty = new Faculty("Auto Date", "AD");
+        Faculty faculty = getFaculty("Auto Date", "AD");
         Faculty saved = facultyRepository.save(faculty);
 
         assertThat(saved.getCreatedAt()).isNotNull();
         assertThat(saved.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+    }
+
+    Faculty getFaculty(String name, String shortcut) {
+        return new Faculty(name, shortcut);
     }
 }
 
